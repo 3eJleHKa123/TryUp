@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TradeMarket</title>
+    <title>TradeMarket — Галерея, Избранное, Чат, Статистика</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,14 +42,14 @@
             -webkit-font-smoothing: antialiased;
         }
         ::-webkit-scrollbar { width: 0; }
- 
+
         .wrap {
             max-width: 520px;
             margin: 0 auto;
             padding: 20px 16px 120px;
             position: relative; z-index: 1;
         }
- 
+
         @keyframes fadeUp {
             from { opacity:0; transform: translateY(18px); }
             to   { opacity:1; transform: translateY(0); }
@@ -67,16 +67,16 @@
             0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
             50%       { box-shadow: 0 0 40px var(--accent-glow), 0 0 60px rgba(255,45,85,0.15); }
         }
- 
+
         .page-enter { animation: fadeUp 0.38s cubic-bezier(0.2,0.8,0.2,1) both; }
         .pop { animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
- 
+
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
         }
- 
+
         .top-nav {
             display: flex;
             align-items: center;
@@ -94,7 +94,7 @@
             font-family: var(--font-display);
             font-size: 16px; font-weight: 700; letter-spacing: -0.3px;
         }
- 
+
         .search-wrap { position: relative; margin-bottom: 20px; }
         .search-wrap .ico { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
         input.search {
@@ -106,7 +106,7 @@
         }
         input.search::placeholder { color: var(--text-3); }
         input.search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,45,85,0.15); }
- 
+
         .inp {
             width: 100%; padding: 15px 18px;
             background: rgba(0,0,0,0.25); border: 1px solid var(--border);
@@ -118,13 +118,13 @@
         .inp::placeholder { color: var(--text-3); }
         select.inp { appearance: none; -webkit-appearance: none; cursor: pointer; }
         textarea.inp { resize: none; line-height: 1.5; }
- 
+
         .lbl {
             display: block; font-size: 12px; font-weight: 600;
             color: var(--text-2); text-transform: uppercase; letter-spacing: 0.8px;
             margin-bottom: 8px;
         }
- 
+
         .badge {
             display: inline-flex; align-items: center; gap: 5px;
             padding: 4px 10px; border-radius: 8px;
@@ -136,9 +136,9 @@
         .badge-pro      { background: rgba(10,132,255,0.15);  color: var(--blue);   border: 1px solid rgba(10,132,255,0.3); }
         .badge-godfather{ background: rgba(191,90,242,0.15); color: var(--purple); border: 1px solid rgba(191,90,242,0.3); }
         .badge-legend   { background: linear-gradient(135deg,rgba(255,215,0,0.25),rgba(255,150,0,0.2)); color: var(--gold); border: 1px solid rgba(255,215,0,0.4); }
- 
+
         .stars { color: var(--gold); font-size: 13px; letter-spacing: 1px; }
- 
+
         /* PROFILE BAR */
         .profile-bar {
             display: flex; align-items: center; justify-content: space-between;
@@ -171,7 +171,7 @@
             background: var(--accent); border: 2px solid var(--bg);
             animation: pulse 2s infinite;
         }
- 
+
         /* PROMO */
         .promo {
             border-radius: var(--radius); padding: 20px; margin-bottom: 24px;
@@ -197,7 +197,7 @@
             background: var(--accent); border-radius: 10px;
             font-size: 13px; font-weight: 700; color: white;
         }
- 
+
         /* PERKS */
         .perks-scroll {
             display: flex; gap: 8px; overflow-x: auto;
@@ -213,11 +213,11 @@
         }
         .perk.on  { background: rgba(48,209,88,0.12); border-color: rgba(48,209,88,0.4); color: var(--green); }
         .perk.off { opacity: 0.45; filter: grayscale(0.8); }
- 
+
         .sec-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .sec-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
         .sec-link  { font-size: 13px; color: var(--accent); font-weight: 600; cursor: pointer; }
- 
+
         /* SERVERS GRID */
         .srv-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
         .srv-card {
@@ -238,7 +238,7 @@
         .srv-dot  { width: 8px; height: 8px; border-radius: 50%; background: var(--srv-color); box-shadow: 0 0 8px 2px var(--srv-color); flex-shrink: 0; margin-top: 3px; }
         .srv-stats { display: flex; gap: 10px; }
         .srv-stat  { font-size: 11px; color: var(--text-2); display: flex; align-items: center; gap: 4px; }
- 
+
         /* FILTER BAR */
         .filter-bar { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 4px; -ms-overflow-style: none; scrollbar-width: none; }
         .filter-bar::-webkit-scrollbar { display: none; }
@@ -250,7 +250,7 @@
         }
         .filter-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
         .filter-chip:active { transform: scale(0.95); }
- 
+
         /* MARKET CARD */
         .mcard {
             margin-bottom: 16px; padding: 18px; cursor: pointer;
@@ -270,7 +270,22 @@
         .mcard-btn { padding: 9px 18px; border-radius: 999px; background: var(--surface-hov); border: 1px solid var(--border-mid); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
         .mcard-btn:active { background: var(--accent); border-color: var(--accent); color: white; }
         .hot-badge { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg,#FF2D55,#FF6B35); border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
- 
+        .boost-badge {
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
+            color: #1a1a1a;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .glow-card {
+            box-shadow: 0 0 0 2px rgba(255,215,0,0.3), 0 0 20px rgba(255,215,0,0.2);
+            border-color: rgba(255,215,0,0.5);
+        }
+
         /* FAB */
         .fab {
             position: fixed; bottom: 90px; right: 20px;
@@ -284,8 +299,8 @@
         }
         .fab.hidden { opacity: 0; transform: scale(0.6) translateY(40px); pointer-events: none; }
         .fab:active { transform: scale(0.9); }
- 
-        /* ITEM DETAIL */
+
+        /* ITEM DETAIL - GALLERY */
         .img-placeholder {
             width: 100%; aspect-ratio: 16/9;
             background: linear-gradient(135deg, var(--bg3), var(--bg2));
@@ -294,8 +309,67 @@
             font-size: 72px; border: 1px solid var(--border);
             position: relative; overflow: hidden;
         }
-        .img-placeholder::after { content:''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.6) 100%); }
- 
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, #1a1a22, #0f0f14);
+        }
+        .gallery-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .gallery-slide {
+            flex-shrink: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .gallery-slide.loaded { opacity: 1; }
+        .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 20px;
+            transition: var(--transition);
+        }
+        .gallery-arrow:active { background: rgba(0,0,0,0.8); transform: translateY(-50%) scale(0.9); }
+        .gallery-arrow.left { left: 12px; }
+        .gallery-arrow.right { right: 12px; }
+        .gallery-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transition: var(--transition);
+        }
+        .dot.active { background: var(--accent); width: 20px; border-radius: 4px; }
+
         .seller-row {
             display: flex; align-items: center; gap: 14px;
             padding: 16px; background: var(--surface);
@@ -303,10 +377,10 @@
             margin-bottom: 16px; cursor: pointer; transition: background 0.15s;
         }
         .seller-row:active { background: var(--surface-hov); }
- 
+
         .item-price-label { font-size: 12px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
         .item-price-val { font-family: var(--font-display); font-size: 36px; font-weight: 900; letter-spacing: -1px; margin-bottom: 20px; }
- 
+
         .btn-primary {
             width: 100%; padding: 16px; background: var(--accent); color: white;
             border-radius: var(--radius-sm); font-size: 15px; font-weight: 700;
@@ -322,7 +396,7 @@
             transition: all 0.15s; margin-bottom: 12px;
         }
         .btn-secondary:active { background: var(--surface-hov); }
- 
+
         .bargain-block { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
         .bargain-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .bargain-label { font-size: 14px; font-weight: 700; }
@@ -330,7 +404,7 @@
         .bid-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
         .bid-btn { padding: 12px; border-radius: var(--radius-sm); background: var(--bg3); border: 1px solid var(--border); font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; transition: all 0.15s; }
         .bid-btn:active { background: var(--accent); border-color: var(--accent); color: white; }
- 
+
         /* CREATE */
         .cat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
         .cat-btn { padding: 12px 8px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--border); text-align: center; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
@@ -340,12 +414,12 @@
         .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 14px; }
         .toggle-label { font-size: 14px; font-weight: 600; }
         input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--accent); cursor: pointer; }
- 
+
         /* DEALS */
         .deal-status-active  { color: var(--green); }
         .deal-status-done    { color: var(--text-2); }
         .deal-status-dispute { color: var(--accent); }
- 
+
         /* PROFILE */
         .profile-hero {
             padding: 28px 20px; text-align: center;
@@ -375,20 +449,20 @@
         .rank-progress-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-2); margin-bottom: 7px; }
         .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
         .progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 1s cubic-bezier(0.2,0.8,0.2,1); }
- 
+
         .review-card { padding: 14px 16px; border-bottom: 1px solid var(--border); }
         .review-card:last-child { border-bottom: none; }
         .review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .review-author { font-size: 14px; font-weight: 700; }
         .review-text { font-size: 13px; color: var(--text-2); line-height: 1.45; }
- 
+
         .menu-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.15s; }
         .menu-item:last-child { border-bottom: none; }
         .menu-item:active { background: var(--surface-hov); }
         .menu-ico  { font-size: 20px; width: 28px; text-align: center; }
         .menu-text { font-size: 15px; font-weight: 600; flex: 1; }
         .menu-arrow{ color: var(--text-3); font-size: 14px; }
- 
+
         /* TAB BAR */
         .tab-bar {
             position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
@@ -403,7 +477,7 @@
         .tab-item.active .tab-ico { transform: scale(1.15); }
         .tab-lbl   { font-size: 10px; font-weight: 600; color: var(--text-3); letter-spacing: 0.3px; }
         .tab-item.active .tab-lbl { color: var(--accent); }
- 
+
         /* MODAL */
         .modal-overlay {
             position: fixed; inset: 0; z-index: 1000;
@@ -415,19 +489,52 @@
         .modal-sheet { background: #1a1a22; width: 100%; max-width: 520px; border-radius: 24px 24px 0 0; padding: 8px 20px 40px; border-top: 1px solid var(--border); }
         .modal-handle { width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); margin: 12px auto 20px; }
         .modal-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin-bottom: 6px; }
- 
+
         .chat-bubble { padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.4; margin-bottom: 8px; max-width: 80%; }
         .chat-bubble.left  { background: var(--bg3); border-bottom-left-radius: 4px; align-self: flex-start; }
         .chat-bubble.right { background: rgba(255,45,85,0.25); border-bottom-right-radius: 4px; align-self: flex-end; margin-left: auto; }
         .chat-wrap { display: flex; flex-direction: column; margin: 16px 0; }
- 
+
         .qr-frame { background: white; padding: 12px; border-radius: 12px; display: inline-block; margin: 16px 0; }
+
+        /* Чат */
+        .chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+        }
+        .message.in { background: var(--surface); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .message.out { background: var(--accent); align-self: flex-end; border-bottom-right-radius: 4px; }
+
+        /* Сравнение */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .price-history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
- 
+
 <div id="app" class="wrap"></div>
- 
+
 <nav class="tab-bar" id="tabBar">
     <div class="tab-item active" data-tab="servers" onclick="switchTab('servers')">
         <div class="tab-ico">🌐</div>
@@ -446,13 +553,14 @@
         <div class="tab-lbl">Профиль</div>
     </div>
 </nav>
- 
+
 <script>
 const tg = window.Telegram?.WebApp || { expand(){}, showAlert(m){alert(m)}, showConfirm(m,cb){cb(confirm(m))}, setHeaderColor(){}, setBackgroundColor(){} };
 tg.expand();
 tg.setHeaderColor?.('#0d0d0f');
 tg.setBackgroundColor?.('#0d0d0f');
- 
+
+// ====================== ОРИГИНАЛЬНЫЕ ДАННЫЕ (НЕ ТРОГАТЬ) ======================
 const SERVERS = [
     {id:1,name:"RED",color:"#FF3B30",type:"RP"},{id:2,name:"GREEN",color:"#34C759",type:"PvP"},
     {id:3,name:"BLUE",color:"#0A84FF",type:"RP"},{id:4,name:"YELLOW",color:"#FFCC00",type:"RP"},
@@ -460,35 +568,104 @@ const SERVERS = [
     {id:8,name:"PINK",color:"#FF2D55",type:"RP"},{id:10,name:"BLACK",color:"#8E8E93",type:"RP"},
     {id:23,name:"MOSCOW",color:"#FF2B3B",type:"RP"},{id:24,name:"SPB",color:"#11A6FA",type:"RP"}
 ];
- 
+
+// ДОБАВЛЯЕМ изображения в ITEMS
 const ITEMS = [
-    {id:1,name:"BMW M5 F90",desc:"Полный тюнинг ФТ, прошивка спорт. Не бит не крашен.",price:4500000,seller:"@prodrift",deals:112,avatar:"🚗",rating:4.9,bargain:true,cat:"car",hot:true},
-    {id:2,name:"VIP Скин (Анонимно)",desc:"Продам редкий скин, сделка только через гаранта.",price:1250000,seller:"Анонимный",deals:45,avatar:"👤",rating:5.0,bargain:false,cat:"skin",hot:false},
-    {id:3,name:"Дом в Рублёвке",desc:"3 этажа + гараж на 4 места. Оплачен на месяц.",price:15000000,seller:"@realestate",deals:18,avatar:"🏠",rating:4.7,bargain:true,cat:"realty",hot:true},
-    {id:4,name:"Сим-карта 777777",desc:"Блатная симка, торг минимальный.",price:250000,seller:"@sim_boss",deals:2,avatar:"📱",rating:4.0,bargain:true,cat:"item",hot:false},
-    {id:5,name:"Вертолёт Maverick",desc:"Редкий хелик, полный бак. Безопасная сделка.",price:8900000,seller:"@airace",deals:67,avatar:"🚁",rating:4.8,bargain:true,cat:"car",hot:true}
+    {id:1,name:"BMW M5 F90",desc:"Полный тюнинг ФТ, прошивка спорт. Не бит не крашен.",price:4500000,seller:"@prodrift",deals:112,avatar:"🚗",rating:4.9,bargain:true,cat:"car",hot:true,images:["https://picsum.photos/id/107/800/450","https://picsum.photos/id/111/800/450","https://picsum.photos/id/112/800/450"],brand:"BMW",model:"M5",mileage:12000,tuning:"Stage 2",color:"Черный",boosted:true,views:340,likes:28,priceHistory:[{date:"01.03",price:4900000},{date:"15.03",price:4500000}]},
+    {id:2,name:"Lamborghini Huracan",desc:"Редкий зверь, полный фарш. Только для коллекционеров.",price:12900000,seller:"@lambo_king",deals:89,avatar:"🐂",rating:5.0,bargain:true,cat:"car",hot:true,images:["https://picsum.photos/id/169/800/450","https://picsum.photos/id/168/800/450"],brand:"Lamborghini",model:"Huracan",mileage:3500,tuning:"Сток",color:"Желтый",boosted:false,views:890,likes:112,priceHistory:[{date:"01.02",price:15200000},{date:"10.03",price:12900000}]},
+    {id:3,name:"Mercedes-AMG GT63",desc:"4.0 V8 biturbo, 639 л.с. Полный привод.",price:7900000,seller:"@amg_power",deals:45,avatar:"⭐",rating:4.7,bargain:false,cat:"car",hot:false,images:["https://picsum.photos/id/104/800/450","https://picsum.photos/id/110/800/450"],brand:"Mercedes",model:"GT63",mileage:8000,tuning:"Renntech",color:"Серебро",boosted:false,views:210,likes:34,priceHistory:[]}
 ];
- 
+
 const DEALS = [
     {id:1,item:"BMW M5 F90",partner:"@buyer_one",status:"active",date:"сегодня",amount:4500000},
     {id:2,item:"Desert Eagle",partner:"@gun_market",status:"done",date:"вчера",amount:600000},
     {id:3,item:"Апарт. на Тверской",partner:"@house99",status:"dispute",date:"2 дня назад",amount:12000000}
 ];
- 
+
 const CATS = [
     {id:"all",icon:"🌐",name:"Все"},{id:"car",icon:"🚗",name:"Транспорт"},
     {id:"realty",icon:"🏠",name:"Недвижка"},{id:"skin",icon:"🥷",name:"Скины"},
     {id:"item",icon:"🎒",name:"Предметы"},{id:"money",icon:"💰",name:"Валюта"},
     {id:"service",icon:"⚙️",name:"Услуги"}
 ];
- 
+
 const ME = {
     name:"Brutal_Player", deals:24, avatar:"😎", rating:4.9, active:3,
+    sellerStats: { views: 1240, likes: 89, completedDeals: 24, responseRate: 98 },
+    boosts: 1,
     perks:[{i:"🥷",t:"Анонимность",on:true},{i:"🚀",t:"Топ в поиске",on:false},{i:"🛡",t:"Доверенный",on:true},{i:"💸",t:"Без комиссии",on:false}]
 };
- 
+
+// ДОПОЛНИТЕЛЬНЫЕ ДАННЫЕ ДЛЯ ФУНКЦИЙ
+let FAVORITES = [];
+let VIEW_HISTORY = [];
+let NOTIFICATIONS = [
+    { id: 1, text: "🔥 Цена на BMW M5 снижена до 4 200 000 ₽", read: false, date: Date.now() - 3600000 },
+    { id: 2, text: "💬 Новое сообщение в сделке по Lamborghini", read: false, date: Date.now() - 7200000 }
+];
+let CHAT_MESSAGES = [
+    { id: 1, text: "Привет! Машина ещё в наличии?", fromMe: false, time: Date.now() - 3600000 },
+    { id: 2, text: "Да, готова к осмотру", fromMe: true, time: Date.now() - 3500000 }
+];
+let COMPARE_LIST = [];
+
 let S = { tab:'servers', view:'servers', server:null, item:null, search:'', cat:'all', selCat:null };
- 
+
+// ====================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ======================
+function saveToLocal() {
+    localStorage.setItem("trade_fav", JSON.stringify(FAVORITES));
+    localStorage.setItem("trade_history", JSON.stringify(VIEW_HISTORY));
+    localStorage.setItem("trade_notif", JSON.stringify(NOTIFICATIONS));
+}
+function loadLocal() {
+    let f = localStorage.getItem("trade_fav");
+    if (f) FAVORITES = JSON.parse(f);
+    let h = localStorage.getItem("trade_history");
+    if (h) VIEW_HISTORY = JSON.parse(h);
+    let n = localStorage.getItem("trade_notif");
+    if (n) NOTIFICATIONS = JSON.parse(n);
+}
+function addToHistory(id) {
+    VIEW_HISTORY = [id, ...VIEW_HISTORY.filter(i => i !== id)].slice(0, 20);
+    saveToLocal();
+}
+function toggleFavorite(id) {
+    if (FAVORITES.includes(id)) FAVORITES = FAVORITES.filter(f => f !== id);
+    else FAVORITES.push(id);
+    saveToLocal();
+    render();
+}
+function isFavorite(id) { return FAVORITES.includes(id); }
+
+function sendMessage(text) {
+    if (!text.trim()) return;
+    CHAT_MESSAGES.push({ id: Date.now(), text: text, fromMe: true, time: Date.now() });
+    setTimeout(() => {
+        CHAT_MESSAGES.push({ id: Date.now(), text: "Спасибо, жду подтверждения оплаты", fromMe: false, time: Date.now() });
+        if (S.view === 'deals') renderDeals();
+    }, 800);
+    if (S.view === 'deals') renderDeals();
+}
+
+function boostItem(id) {
+    let item = ITEMS.find(i => i.id === id);
+    if (item && ME.boosts > 0) {
+        item.boosted = true;
+        ME.boosts--;
+        tg.showAlert(`Объявление "${item.name}" поднято вверх! Осталось бустов: ${ME.boosts}`);
+        render();
+    } else {
+        tg.showAlert("Нет доступных бустов. Купите в магазине.");
+    }
+}
+
+function compareItems(id1, id2) {
+    COMPARE_LIST = [id1, id2];
+    renderCompareView();
+}
+
+function getItemById(id) { return ITEMS.find(i => i.id === id); }
+
 function rank(n) {
     if(n<=5)   return {name:"Новичок",     cls:"badge-novice",    icon:"🌱",next:5};
     if(n<=20)  return {name:"Дилер",       cls:"badge-dealer",    icon:"💼",next:20};
@@ -496,32 +673,32 @@ function rank(n) {
     if(n<=100) return {name:"Крёстный Отец",cls:"badge-godfather",icon:"👑",next:100};
     return            {name:"Легенда",     cls:"badge-legend",    icon:"⚡",next:999};
 }
- 
+
 function fmt(n) {
     if(n>=1000000) return (n/1000000).toFixed(1).replace('.0','')+'М';
     if(n>=1000)    return (n/1000).toFixed(0)+'К';
     return n.toLocaleString('ru');
 }
- 
+
 function bargainBtns(price) {
     if(price<=300000)  return [{t:'-10К',v:10000},{t:'-20К',v:20000},{t:'-50К',v:50000},{t:'Своя сумма',v:0}];
     if(price<=5000000) return [{t:'-50К',v:50000},{t:'-100К',v:100000},{t:'-200К',v:200000},{t:'-500К',v:500000}];
     return [{t:'-500К',v:500000},{t:'-1М',v:1000000},{t:'-2М',v:2000000},{t:'Своя сумма',v:0}];
 }
- 
+
 function starsHtml(r) {
     let s=''; const full=Math.floor(r);
     for(let i=0;i<full;i++) s+='★';
     return `<span class="stars">${s}</span> <span style="font-size:12px;color:var(--text-2)">${r}</span>`;
 }
- 
+
 function go(view, extra={}) {
     Object.assign(S, extra, {view});
     S.search = '';
     render();
     window.scrollTo(0,0);
 }
- 
+
 function switchTab(tab) {
     S.tab = tab;
     if(tab==='servers')       go('servers');
@@ -530,15 +707,35 @@ function switchTab(tab) {
     else if(tab==='profile')  go('profile');
     updateTabBar();
 }
- 
+
 function updateTabBar() {
     document.querySelectorAll('.tab-item').forEach(el => {
         el.classList.toggle('active', el.dataset.tab === S.tab);
     });
 }
- 
-/* ===== SCREENS ===== */
- 
+
+// ====================== ГАЛЕРЕЯ ======================
+let galleryIndex = 0;
+function changeSlide(delta) {
+    if (!S.item) return;
+    let track = document.getElementById('galleryTrack');
+    let slides = document.querySelectorAll('.gallery-slide');
+    if (!track || !slides.length) return;
+    galleryIndex = (galleryIndex + delta + slides.length) % slides.length;
+    track.style.transform = `translateX(-${galleryIndex * 100}%)`;
+    let dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === galleryIndex));
+}
+function initGallery() {
+    let slides = document.querySelectorAll('.gallery-slide');
+    let dotsContainer = document.getElementById('galleryDots');
+    if (dotsContainer && slides.length) {
+        dotsContainer.innerHTML = slides.map((_, idx) => `<div class="dot ${idx === 0 ? 'active' : ''}"></div>`).join('');
+        galleryIndex = 0;
+    }
+}
+
+// ====================== ОРИГИНАЛЬНЫЕ ФУНКЦИИ (НЕ ТРОГАТЬ) ======================
 function renderServers() {
     const r = rank(ME.deals);
     const filtered = SERVERS.filter(s => s.name.toLowerCase().includes(S.search.toLowerCase()));
@@ -551,18 +748,18 @@ function renderServers() {
                     <span class="badge ${r.cls}">${r.icon} ${r.name}</span>
                 </div>
             </div>
-            <div class="notif-btn" onclick="event.stopPropagation();tg.showAlert('2 новых уведомления!')">
+            <div class="notif-btn" onclick="event.stopPropagation();openNotifications()">
                 🔔<div class="notif-dot"></div>
             </div>
         </div>
- 
+
         <div class="promo" onclick="tg.showAlert('Оформление VIP...')">
             <div class="promo-tag">Premium</div>
             <h3>🔥 VIP со скидкой 50%</h3>
             <p>Топ позиции, анонимность, выделенные объявления и без комиссии.</p>
             <div class="promo-cta">Оформить за 99₽ →</div>
         </div>
- 
+
         <div class="sec-head" style="margin-bottom:10px;">
             <div class="sec-title">⚡ Улучшения</div>
             <div class="sec-link" onclick="go('profile')">Магазин</div>
@@ -570,7 +767,7 @@ function renderServers() {
         <div class="perks-scroll">
             ${ME.perks.map(p=>`<div class="perk ${p.on?'on':'off'}" onclick="tg.showAlert('${p.on?'Активно!':'Нужен VIP или ранг выше'}')">${p.i} ${p.t}</div>`).join('')}
         </div>
- 
+
         <div class="sec-head">
             <div class="sec-title">🌐 Выбор сервера</div>
         </div>
@@ -578,7 +775,7 @@ function renderServers() {
             <span class="ico">🔎</span>
             <input class="search" type="text" placeholder="Найти сервер..." value="${S.search}" oninput="S.search=this.value;render()">
         </div>
- 
+
         <div class="srv-grid">
             ${filtered.map((s,i)=>{
                 const online=800+(s.id*13%200), ads=40+(s.id*7%100), fav=[3,23].includes(s.id);
@@ -597,7 +794,7 @@ function renderServers() {
         </div>
     </div>`;
 }
- 
+
 function renderMarket() {
     const items = ITEMS.filter(it => {
         const qOk = it.name.toLowerCase().includes(S.search.toLowerCase()) || it.seller.toLowerCase().includes(S.search.toLowerCase());
@@ -609,33 +806,36 @@ function renderMarket() {
         <div class="top-nav">
             <div class="nav-back" onclick="go('servers')">←</div>
             <div class="nav-title" style="color:${srv?.color||'var(--accent)'};">${srv?.name||'GLOBAL'} MARKET</div>
-            <div style="width:42px;"></div>
+            <div class="notif-btn" style="width:42px;height:42px;" onclick="openNotifications()">🔔</div>
         </div>
- 
+
         <div class="search-wrap">
             <span class="ico">🔎</span>
             <input class="search" type="text" placeholder="Лот или @продавец..." value="${S.search}" oninput="S.search=this.value;render()">
         </div>
- 
+
         <div class="filter-bar">
             ${CATS.map(c=>`<div class="filter-chip ${S.cat===c.id?'active':''}" onclick="S.cat='${c.id}';render()">${c.icon} ${c.name}</div>`).join('')}
+            <div class="filter-chip" onclick="openCompare()">⚖️ Сравнить</div>
         </div>
- 
+
         ${items.length===0?`<div style="text-align:center;padding:60px 20px;color:var(--text-3);">
             <div style="font-size:48px;margin-bottom:12px;">🔍</div>
             <div style="font-size:16px;font-weight:600;">Ничего не найдено</div>
         </div>`:''}
- 
+
         ${items.map((it,i)=>{
             const r=rank(it.deals);
-            return `<div class="mcard" style="animation:fadeUp 0.3s ${i*0.05}s both;" onclick="openItem(${it.id})">
+            return `<div class="mcard ${it.boosted ? 'glow-card' : ''}" style="animation:fadeUp 0.3s ${i*0.05}s both;" onclick="openItem(${it.id})">
                 ${it.hot?'<div class="hot-badge">🔥 HOT</div>':''}
+                ${it.boosted?'<div style="position:absolute; top:14px; left:14px;"><span class="boost-badge">⚡ BOOST</span></div>':''}
                 <div class="mcard-top">
                     <div class="mcard-ava">${it.avatar}</div>
                     <div style="flex:1;min-width:0;">
                         <div class="mcard-seller">${it.seller}</div>
                         <div class="mcard-meta">${starsHtml(it.rating)} <span class="badge ${r.cls}">${r.name}</span></div>
                     </div>
+                    <div onclick="event.stopPropagation(); toggleFavorite(${it.id})" style="font-size:24px; cursor:pointer;">${isFavorite(it.id) ? '❤️' : '🤍'}</div>
                 </div>
                 <div class="mcard-title">${it.name}</div>
                 <div class="mcard-desc">${it.desc.substring(0,55)}${it.desc.length>55?'…':''}</div>
@@ -648,24 +848,40 @@ function renderMarket() {
                 </div>
             </div>`;
         }).join('')}
- 
+
         <div class="fab" id="fab" onclick="go('create')">+</div>
     </div>`;
 }
- 
+
 function renderItem() {
     const it = S.item;
     const r = rank(it.deals);
     const btns = it.bargain ? bargainBtns(it.price) : [];
+    let galleryHtml = `
+        <div class="gallery-container" id="galleryContainer">
+            <div class="gallery-track" id="galleryTrack">
+                ${it.images.map((img, idx) => `<img src="${img}" class="gallery-slide" data-idx="${idx}" loading="lazy" onload="this.classList.add('loaded')">`).join('')}
+            </div>
+            <div class="gallery-arrow left" onclick="event.stopPropagation(); changeSlide(-1)">‹</div>
+            <div class="gallery-arrow right" onclick="event.stopPropagation(); changeSlide(1)">›</div>
+            <div class="gallery-dots" id="galleryDots"></div>
+        </div>
+    `;
+    let priceHistoryHtml = it.priceHistory && it.priceHistory.length ? `
+        <div style="margin-top:20px; background:var(--surface); border-radius:var(--radius-sm); padding:16px;">
+            <div style="font-weight:800; margin-bottom:12px;">📈 История цен</div>
+            ${it.priceHistory.map(ph => `<div class="price-history-item"><span>${ph.date}</span><span>${ph.price.toLocaleString()} ₽</span></div>`).join('')}
+        </div>
+    ` : '';
     return `<div class="page-enter">
         <div class="top-nav">
             <div class="nav-back" onclick="go('market')">←</div>
             <div class="nav-title">Объявление</div>
             <div style="width:42px;text-align:right;font-size:20px;cursor:pointer;" onclick="tg.showAlert('Скопировано: t.me/bot?start=ad_${it.id}')">🔗</div>
         </div>
- 
-        <div class="img-placeholder pop"><div style="position:relative;z-index:1;">${it.avatar}</div></div>
- 
+
+        ${galleryHtml}
+
         <div class="seller-row" onclick="tg.showAlert('Профиль продавца: ${it.seller}')">
             <div class="mcard-ava">${it.avatar}</div>
             <div style="flex:1;">
@@ -678,16 +894,26 @@ function renderItem() {
             </div>
             <div style="color:var(--text-3)">›</div>
         </div>
- 
+
         <h2 style="font-family:var(--font-display);font-size:22px;font-weight:700;letter-spacing:-0.4px;margin-bottom:8px;">${it.name}</h2>
         <p style="font-size:14px;color:var(--text-2);line-height:1.6;margin-bottom:20px;">${it.desc}</p>
- 
+
+        <div class="stats-row" style="margin:16px 0;">
+            <div class="stat-item"><div class="stat-val">${it.views}</div><div class="stat-lbl">👁️ просмотров</div></div>
+            <div class="stat-item"><div class="stat-val">${it.likes}</div><div class="stat-lbl">❤️ лайков</div></div>
+            <div class="stat-item"><div class="stat-val">${it.deals}</div><div class="stat-lbl">сделок</div></div>
+        </div>
+
         <div class="item-price-label">Цена</div>
         <div class="item-price-val">${it.price.toLocaleString('ru-RU')} <span style="font-size:20px;color:var(--text-2)">₽</span></div>
- 
+
         <div class="btn-primary" onclick="startDeal()">🤝 Купить через Гаранта</div>
-        <div class="btn-secondary" onclick="tg.showAlert('Открываем чат с ${it.seller}...')">💬 Написать продавцу</div>
- 
+        <div class="btn-secondary" onclick="openChat()">💬 Написать продавцу</div>
+        <div class="btn-secondary" onclick="boostItem(${it.id})">⚡ Поднять объявление (буст)</div>
+        <div class="btn-secondary" onclick="compareItems(${it.id}, ${it.id === 1 ? 2 : 1})">⚖️ Сравнить с другим авто</div>
+
+        ${priceHistoryHtml}
+
         ${it.bargain?`<div class="bargain-block">
             <div class="bargain-title">
                 <div class="bargain-label">💰 Предложить цену</div>
@@ -697,7 +923,7 @@ function renderItem() {
         </div>`:`<div style="text-align:center;padding:14px;background:rgba(0,0,0,0.2);border-radius:var(--radius-sm);font-size:13px;color:var(--text-2);">🔒 Продавец отключил торг</div>`}
     </div>`;
 }
- 
+
 function renderCreate() {
     const catOptions = [
         {id:'car',i:'🚗',n:'Транспорт'},{id:'realty',i:'🏠',n:'Недвижка'},
@@ -710,36 +936,36 @@ function renderCreate() {
             <div class="nav-title">Новый лот</div>
             <div style="width:42px;"></div>
         </div>
- 
+
         <div class="card" style="padding:20px;margin-bottom:16px;">
             <div class="lbl">Категория</div>
             <div class="cat-grid">
                 ${catOptions.map(c=>`<div class="cat-btn ${S.selCat===c.id?'sel':''}" onclick="S.selCat='${c.id}';render()"><span>${c.i}</span><span>${c.n}</span></div>`).join('')}
             </div>
- 
+
             <div class="lbl">Название</div>
             <input type="text" class="inp" placeholder="Например: BMW M5 F90">
- 
+
             <div class="lbl">Описание</div>
             <textarea class="inp" rows="3" placeholder="Опишите товар подробнее..."></textarea>
- 
+
             <div class="lbl">Цена (игровые ₽)</div>
             <input type="number" class="inp" placeholder="5 000 000">
- 
+
             <div class="lbl">Способ связи</div>
             <select class="inp">
                 <option>📢 Публично (@username)</option>
                 <option>👤 Анонимно (только бот-гарант)</option>
             </select>
- 
+
             <div class="toggle-row"><div class="toggle-label">💰 Разрешить торг</div><input type="checkbox" checked></div>
             <div class="toggle-row"><div class="toggle-label">📢 Опубликовать в канал сервера</div><input type="checkbox" checked></div>
         </div>
- 
+
         <div class="btn-primary" onclick="publishAd()">Опубликовать лот</div>
     </div>`;
 }
- 
+
 function renderDeals() {
     const statusColor = {active:'var(--green)',done:'var(--text-2)',dispute:'var(--accent)'};
     const statusLabel = {active:'🟢 Активна',done:'✅ Завершена',dispute:'⚠️ Спор'};
@@ -757,14 +983,14 @@ function renderDeals() {
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;">
                 <div style="font-family:var(--font-display);font-size:16px;font-weight:700;">${d.amount.toLocaleString('ru-RU')} ₽</div>
-                <div style="font-size:13px;font-weight:600;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:999px;cursor:pointer;" onclick="tg.showAlert('Детали сделки...')">
+                <div style="font-size:13px;font-weight:600;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:999px;cursor:pointer;" onclick="openChat()">
                     ${d.status==='active'?'Чат →':'Детали →'}
                 </div>
             </div>
         </div>`).join('')}
     </div>`;
 }
- 
+
 function renderProfile() {
     const r = rank(ME.deals);
     const progress = Math.min((ME.deals / r.next)*100, 100);
@@ -779,12 +1005,17 @@ function renderProfile() {
                 <div class="stat-item"><div class="stat-val" style="color:var(--gold);">${ME.rating}</div><div class="stat-lbl">Рейтинг</div></div>
                 <div class="stat-item"><div class="stat-val">${ME.active}</div><div class="stat-lbl">Активных</div></div>
             </div>
+            <div class="stats-row" style="margin-top:16px;">
+                <div class="stat-item"><div class="stat-val">${ME.sellerStats.views}</div><div class="stat-lbl">просмотров</div></div>
+                <div class="stat-item"><div class="stat-val">${ME.sellerStats.likes}</div><div class="stat-lbl">лайков</div></div>
+                <div class="stat-item"><div class="stat-val">${ME.sellerStats.responseRate}%</div><div class="stat-lbl">ответов</div></div>
+            </div>
             <div class="rank-progress">
                 <div class="rank-progress-top"><span>До «${nextRankName}»</span><span>${ME.deals} / ${r.next}</span></div>
                 <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
             </div>
         </div>
- 
+
         <div class="sec-head"><div class="sec-title">⭐ Отзывы</div></div>
         <div class="card" style="margin-bottom:20px;">
             <div class="review-card">
@@ -796,10 +1027,23 @@ function renderProfile() {
                 <div class="review-text">Норм продавец, сделка через бота прошла ок.</div>
             </div>
         </div>
- 
+
+        <div class="sec-head"><div class="sec-title">❤️ Избранное (${FAVORITES.length})</div></div>
+        <div class="card" style="margin-bottom:20px;">
+            ${FAVORITES.map(id => {
+                const item = ITEMS.find(i => i.id === id);
+                return item ? `<div class="menu-item" onclick="openItem(${item.id})">
+                    <div class="menu-ico">${item.avatar}</div>
+                    <div class="menu-text">${item.name}</div>
+                    <div class="menu-arrow">›</div>
+                </div>` : '';
+            }).join('')}
+            ${FAVORITES.length === 0 ? '<div style="padding:16px; text-align:center; color:var(--text-2);">Нет избранных</div>' : ''}
+        </div>
+
         <div class="sec-head"><div class="sec-title">⚙️ Настройки</div></div>
         <div class="card" style="margin-bottom:20px;">
-            ${[{i:'📢',t:'Мои объявления'},{i:'🤝',t:'История сделок'},{i:'🥷',t:'Режим анонимности'},{i:'🌙',t:'Тема оформления'},{i:'🔔',t:'Уведомления'},{i:'⭐',t:'Избранные серверы'}]
+            ${[{i:'📢',t:'Мои объявления'},{i:'👁️',t:'История просмотров'},{i:'🥷',t:'Режим анонимности'},{i:'🌙',t:'Тема оформления'},{i:'🔔',t:'Уведомления'},{i:'⭐',t:'Избранные серверы'}]
             .map(m=>`<div class="menu-item" onclick="tg.showAlert('${m.t} — скоро доступно!')">
                 <div class="menu-ico">${m.i}</div>
                 <div class="menu-text">${m.t}</div>
@@ -808,87 +1052,130 @@ function renderProfile() {
         </div>
     </div>`;
 }
- 
-/* ===== ACTIONS ===== */
+
+function renderCompareView() {
+    let item1 = getItemById(COMPARE_LIST[0]);
+    let item2 = getItemById(COMPARE_LIST[1]);
+    if (!item1 || !item2) {
+        COMPARE_LIST = [1,2];
+        item1 = ITEMS[0];
+        item2 = ITEMS[1];
+    }
+    return `<div class="page-enter">
+        <div class="top-nav">
+            <div class="nav-back" onclick="go('market')">←</div>
+            <div class="nav-title">Сравнение</div>
+            <div style="width:42px;"></div>
+        </div>
+        <div class="compare-grid">
+            <div class="card" style="padding:16px;"><h3>${item1.name}</h3><div>💰 ${item1.price.toLocaleString()} ₽</div><div>📏 ${item1.mileage} км</div><div>🎨 ${item1.color}</div><div>⚙️ ${item1.tuning}</div></div>
+            <div class="card" style="padding:16px;"><h3>${item2.name}</h3><div>💰 ${item2.price.toLocaleString()} ₽</div><div>📏 ${item2.mileage} км</div><div>🎨 ${item2.color}</div><div>⚙️ ${item2.tuning}</div></div>
+        </div>
+        <div class="btn-primary" style="margin-top:20px;" onclick="go('market')">Закрыть</div>
+    </div>`;
+}
+
+function renderChatView() {
+    let chatHtml = `<div class="page-enter">
+        <div class="top-nav">
+            <div class="nav-back" onclick="go('deals')">←</div>
+            <div class="nav-title">💬 Чат сделки</div>
+            <div style="width:42px;"></div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            ${CHAT_MESSAGES.map(m => `<div class="message ${m.fromMe ? 'out' : 'in'}">${m.text}<div style="font-size:10px; margin-top:4px;">${new Date(m.time).toLocaleTimeString()}</div></div>`).join('')}
+        </div>
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="chatInput" class="btn-secondary" style="flex:3; text-align:left;" placeholder="Сообщение...">
+            <div class="btn-primary" style="flex:1;" onclick="sendMessage(document.getElementById('chatInput').value); document.getElementById('chatInput').value='';">➤</div>
+        </div>
+    </div>`;
+    document.getElementById('app').innerHTML = chatHtml;
+    setTimeout(() => {
+        const msgs = document.getElementById('chatMessages');
+        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+    }, 50);
+}
+
+function renderNotificationsView() {
+    NOTIFICATIONS.forEach(n => n.read = true);
+    saveToLocal();
+    return `<div class="page-enter">
+        <div class="top-nav">
+            <div class="nav-back" onclick="go('servers')">←</div>
+            <div class="nav-title">🔔 Уведомления</div>
+            <div style="width:42px;"></div>
+        </div>
+        ${NOTIFICATIONS.map(n => `<div class="card" style="padding:16px; margin-bottom:12px;">${n.text}</div>`).join('')}
+        ${NOTIFICATIONS.length === 0 ? '<div class="card" style="padding:32px; text-align:center;">Нет уведомлений</div>' : ''}
+    </div>`;
+}
+
+// ====================== ГЛОБАЛЬНЫЕ ФУНКЦИИ ======================
 window.selServer = (id, color) => {
     S.server = SERVERS.find(s=>s.id===id);
     S.cat = 'all'; S.tab = 'market';
     document.documentElement.style.setProperty('--accent', color);
     go('market'); updateTabBar();
 };
- 
 window.openItem = (id) => {
     S.item = ITEMS.find(i=>i.id===id);
+    addToHistory(id);
     go('item');
+    setTimeout(initGallery, 50);
 };
- 
 window.startDeal = () => {
-    const it = S.item;
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.innerHTML = `<div class="modal-sheet">
-        <div class="modal-handle"></div>
-        <div class="modal-title">🤝 Открытие сделки</div>
-        <p style="font-size:14px;color:var(--text-2);margin-bottom:16px;">Бот создаст защищённый чат между тобой и продавцом ${it.seller}</p>
-        <div class="chat-wrap">
-            <div class="chat-bubble left">Привет! Интересует "${it.name}"</div>
-            <div class="chat-bubble right">Привет! Готов к сделке</div>
-            <div class="chat-bubble left">Ок, подтверждаю через бота</div>
-        </div>
-        <div class="btn-primary" id="confirmBtn" onclick="confirmDeal(this)">✅ Создать сделку</div>
-        <div class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Отмена</div>
-    </div>`;
-    document.body.appendChild(overlay);
+    tg.showConfirm(`Подтверждаете покупку "${S.item.name}" за ${S.item.price.toLocaleString()} ₽?`, (confirmed) => {
+        if (confirmed) {
+            tg.showAlert(`Сделка создана! Перейдите в раздел "Сделки" для чата.`);
+            go('deals');
+        }
+    });
 };
- 
-window.confirmDeal = (btn) => {
-    btn.textContent = '⏳ Создаём чат...';
-    setTimeout(()=>{ document.querySelector('.modal-overlay')?.remove(); tg.showAlert('✅ Сделка открыта! Проверь ЛС бота.'); }, 1200);
+window.openChat = () => {
+    go('deals');
 };
- 
 window.sendBid = (t) => {
     if(t==='Своя сумма') tg.showAlert('Введи свою сумму. Функция в разработке.');
     else tg.showAlert(`Предложение «${t}» отправлено!\nСледующее через 30 минут.`);
 };
- 
 window.publishAd = () => {
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.innerHTML = `<div class="modal-sheet" style="text-align:center;">
-        <div class="modal-handle"></div>
-        <div style="font-size:56px;margin-bottom:16px;">✅</div>
-        <div class="modal-title">Лот опубликован!</div>
-        <p style="font-size:14px;color:var(--text-2);margin:8px 0 16px;">Поделись ссылкой, чтобы продать быстрее</p>
-        <div class="qr-frame">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=t.me/bot?start=ad_new" style="border-radius:6px;display:block;">
-        </div>
-        <div style="display:flex;gap:10px;margin-top:8px;">
-            <div style="flex:1;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-weight:700;cursor:pointer;text-align:center;" onclick="this.closest('.modal-overlay').remove();go('market')">Закрыть</div>
-            <div style="flex:2;padding:14px;background:var(--accent);color:white;border-radius:var(--radius-sm);font-weight:700;cursor:pointer;text-align:center;" onclick="tg.showAlert('Ссылка скопирована!');this.closest('.modal-overlay').remove();go('market')">📋 Скопировать</div>
-        </div>
-    </div>`;
-    document.body.appendChild(overlay);
+    tg.showAlert('Объявление опубликовано! Теперь оно появится в ленте.');
+    go('market');
 };
- 
-/* ===== RENDER ===== */
+window.openCompare = () => {
+    renderCompareView();
+};
+window.openNotifications = () => {
+    const app = document.getElementById('app');
+    app.innerHTML = renderNotificationsView();
+    window.scrollTo(0,0);
+};
+window.boostItem = boostItem;
+window.compareItems = compareItems;
+window.toggleFavorite = toggleFavorite;
+window.sendMessage = sendMessage;
+
 function render() {
     const app = document.getElementById('app');
     if(S.view==='servers') app.innerHTML = renderServers();
     else if(S.view==='market')  app.innerHTML = renderMarket();
     else if(S.view==='item')    app.innerHTML = renderItem();
     else if(S.view==='create')  app.innerHTML = renderCreate();
-    else if(S.view==='deals')   app.innerHTML = renderDeals();
+    else if(S.view==='deals')   renderChatView();
     else if(S.view==='profile') app.innerHTML = renderProfile();
- 
+    else if(S.view==='compare') app.innerHTML = renderCompareView();
+
     if(S.view==='market') {
         const fab = document.getElementById('fab');
         let last = 0;
         window.onscroll = () => { const c=window.scrollY; if(fab) fab.classList.toggle('hidden',c>last&&c>60); last=c; };
     } else { window.onscroll = null; }
- 
     updateTabBar();
 }
- 
+
+loadLocal();
 render();
 </script>
 </body>
+</html>
