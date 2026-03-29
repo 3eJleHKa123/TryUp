@@ -3,443 +3,892 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TradeMarket — Dark Premium</title>
+    <title>TradeMarket</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-deep: #141414;
-            --glass-base: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-pink: #FF2D55;
-            --text-main: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.6);
-            --radius-md: 20px;
-            --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --bg: #0d0d0f;
+            --bg2: #131317;
+            --bg3: #1a1a20;
+            --surface: rgba(255,255,255,0.05);
+            --surface-hov: rgba(255,255,255,0.09);
+            --border: rgba(255,255,255,0.09);
+            --border-mid: rgba(255,255,255,0.16);
+            --accent: #FF2D55;
+            --accent-glow: rgba(255,45,85,0.35);
+            --accent2: #FF6B35;
+            --gold: #FFD700;
+            --green: #30D158;
+            --blue: #0A84FF;
+            --purple: #BF5AF2;
+            --text: #ffffff;
+            --text-2: rgba(255,255,255,0.6);
+            --text-3: rgba(255,255,255,0.35);
+            --radius: 18px;
+            --radius-sm: 12px;
+            --font-display: 'Unbounded', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --srv-color: #FF2D55;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
-        
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        html { overflow-x: hidden; }
         body {
-            background: var(--bg-deep); color: var(--text-main);
-            min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased;
-            padding-bottom: 90px; /* Отступ под нижнее меню */
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
-
-        /* УТИЛИТЫ И СТЕКЛО */
-        .glass-relief {
-            background: var(--glass-base); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-radius: var(--radius-md); border: 1px solid var(--glass-border);
+        ::-webkit-scrollbar { width: 0; }
+ 
+        .wrap {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 20px 16px 120px;
+            position: relative; z-index: 1;
+        }
+ 
+        @keyframes fadeUp {
+            from { opacity:0; transform: translateY(18px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        @keyframes pop {
+            0%   { transform: scale(0.92); opacity:0; }
+            70%  { transform: scale(1.03); }
+            100% { transform: scale(1); opacity:1; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+            50%       { box-shadow: 0 0 40px var(--accent-glow), 0 0 60px rgba(255,45,85,0.15); }
+        }
+ 
+        .page-enter { animation: fadeUp 0.38s cubic-bezier(0.2,0.8,0.2,1) both; }
+        .pop { animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+ 
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+ 
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .nav-back {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: var(--surface); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; cursor: pointer; transition: background 0.15s;
+        }
+        .nav-back:active { background: var(--surface-hov); }
+        .nav-title {
+            font-family: var(--font-display);
+            font-size: 16px; font-weight: 700; letter-spacing: -0.3px;
+        }
+ 
+        .search-wrap { position: relative; margin-bottom: 20px; }
+        .search-wrap .ico { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+        input.search {
+            width: 100%; padding: 14px 16px 14px 44px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 999px; color: var(--text); font-size: 15px;
+            font-family: var(--font-body); outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input.search::placeholder { color: var(--text-3); }
+        input.search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,45,85,0.15); }
+ 
+        .inp {
+            width: 100%; padding: 15px 18px;
+            background: rgba(0,0,0,0.25); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text);
+            font-size: 15px; font-family: var(--font-body); outline: none;
+            margin-bottom: 14px; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,45,85,0.12); }
+        .inp::placeholder { color: var(--text-3); }
+        select.inp { appearance: none; -webkit-appearance: none; cursor: pointer; }
+        textarea.inp { resize: none; line-height: 1.5; }
+ 
+        .lbl {
+            display: block; font-size: 12px; font-weight: 600;
+            color: var(--text-2); text-transform: uppercase; letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+ 
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px; border-radius: 8px;
+            font-family: var(--font-display);
+            font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+        }
+        .badge-novice   { background: rgba(142,142,147,0.2); color: #8E8E93; border: 1px solid rgba(142,142,147,0.3); }
+        .badge-dealer   { background: rgba(48,209,88,0.15);  color: var(--green);  border: 1px solid rgba(48,209,88,0.3); }
+        .badge-pro      { background: rgba(10,132,255,0.15);  color: var(--blue);   border: 1px solid rgba(10,132,255,0.3); }
+        .badge-godfather{ background: rgba(191,90,242,0.15); color: var(--purple); border: 1px solid rgba(191,90,242,0.3); }
+        .badge-legend   { background: linear-gradient(135deg,rgba(255,215,0,0.25),rgba(255,150,0,0.2)); color: var(--gold); border: 1px solid rgba(255,215,0,0.4); }
+ 
+        .stars { color: var(--gold); font-size: 13px; letter-spacing: 1px; }
+ 
+        /* PROFILE BAR */
+        .profile-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px; padding: 14px 16px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); cursor: pointer; transition: background 0.15s;
+        }
+        .profile-bar:active { background: var(--surface-hov); }
+        .profile-left { display: flex; align-items: center; gap: 12px; }
+        .profile-ava {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, #FF2D55, #FF6B35);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; flex-shrink: 0;
+            border: 2px solid rgba(255,45,85,0.4);
+        }
+        .profile-name {
+            font-family: var(--font-display);
+            font-size: 15px; font-weight: 700; letter-spacing: -0.2px; margin-bottom: 5px;
+        }
+        .notif-btn {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: var(--bg3); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; position: relative; cursor: pointer; flex-shrink: 0;
+        }
+        .notif-dot {
+            position: absolute; top: 8px; right: 8px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent); border: 2px solid var(--bg);
+            animation: pulse 2s infinite;
+        }
+ 
+        /* PROMO */
+        .promo {
+            border-radius: var(--radius); padding: 20px; margin-bottom: 24px;
+            background: linear-gradient(135deg, rgba(255,45,85,0.18), rgba(255,107,53,0.08));
+            border: 1px solid rgba(255,45,85,0.3);
+            position: relative; overflow: hidden; cursor: pointer;
+        }
+        .promo::after {
+            content:''; position: absolute; top: -30px; right: -20px;
+            width: 120px; height: 120px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,45,85,0.25), transparent 70%);
+        }
+        .promo-tag {
+            display: inline-block; padding: 3px 8px;
+            background: var(--accent); border-radius: 6px;
+            font-size: 9px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.8px; margin-bottom: 10px;
+        }
+        .promo h3 { font-family: var(--font-display); font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+        .promo p  { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 14px; }
+        .promo-cta {
+            display: inline-block; padding: 10px 18px;
+            background: var(--accent); border-radius: 10px;
+            font-size: 13px; font-weight: 700; color: white;
+        }
+ 
+        /* PERKS */
+        .perks-scroll {
+            display: flex; gap: 8px; overflow-x: auto;
+            padding-bottom: 4px; margin-bottom: 28px;
+            -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .perks-scroll::-webkit-scrollbar { display: none; }
+        .perk {
+            white-space: nowrap; padding: 10px 14px; border-radius: var(--radius-sm);
+            background: var(--surface); border: 1px solid var(--border);
+            font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;
+            cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+        }
+        .perk.on  { background: rgba(48,209,88,0.12); border-color: rgba(48,209,88,0.4); color: var(--green); }
+        .perk.off { opacity: 0.45; filter: grayscale(0.8); }
+ 
+        .sec-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .sec-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+        .sec-link  { font-size: 13px; color: var(--accent); font-weight: 600; cursor: pointer; }
+ 
+        /* SERVERS GRID */
+        .srv-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+        .srv-card {
+            padding: 14px 16px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); cursor: pointer;
+            transition: all 0.2s; position: relative; overflow: hidden;
+        }
+        .srv-card::before {
+            content:''; position: absolute; inset: 0; border-radius: inherit;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--srv-color) 15%, transparent), transparent 60%);
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .srv-card:active::before { opacity: 1; }
+        .srv-card:active { transform: scale(0.96); border-color: var(--srv-color); }
+        .srv-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .srv-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -0.2px; line-height: 1.2; }
+        .srv-dot  { width: 8px; height: 8px; border-radius: 50%; background: var(--srv-color); box-shadow: 0 0 8px 2px var(--srv-color); flex-shrink: 0; margin-top: 3px; }
+        .srv-stats { display: flex; gap: 10px; }
+        .srv-stat  { font-size: 11px; color: var(--text-2); display: flex; align-items: center; gap: 4px; }
+ 
+        /* FILTER BAR */
+        .filter-bar { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 4px; -ms-overflow-style: none; scrollbar-width: none; }
+        .filter-bar::-webkit-scrollbar { display: none; }
+        .filter-chip {
+            white-space: nowrap; padding: 8px 14px; border-radius: 999px;
+            background: var(--surface); border: 1px solid var(--border);
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: all 0.15s; flex-shrink: 0;
+        }
+        .filter-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .filter-chip:active { transform: scale(0.95); }
+ 
+        /* MARKET CARD */
+        .mcard {
+            margin-bottom: 16px; padding: 18px; cursor: pointer;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); transition: all 0.15s; position: relative; overflow: hidden;
+        }
+        .mcard:active { transform: scale(0.98); background: var(--surface-hov); }
+        .mcard-top   { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .mcard-ava   { width: 44px; height: 44px; border-radius: 50%; background: var(--bg3); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .mcard-seller{ font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .mcard-meta  { display: flex; align-items: center; gap: 6px; font-size: 12px; flex-wrap: wrap; }
+        .mcard-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+        .mcard-desc  { font-size: 13px; color: var(--text-2); line-height: 1.4; margin-bottom: 16px; }
+        .mcard-footer{ display: flex; align-items: center; justify-content: space-between; }
+        .mcard-price { font-family: var(--font-display); font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+        .mcard-bargain { font-size: 11px; color: var(--green); font-weight: 600; background: rgba(48,209,88,0.1); padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(48,209,88,0.25); }
+        .mcard-btn { padding: 9px 18px; border-radius: 999px; background: var(--surface-hov); border: 1px solid var(--border-mid); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+        .mcard-btn:active { background: var(--accent); border-color: var(--accent); color: white; }
+        .hot-badge { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg,#FF2D55,#FF6B35); border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
+ 
+        /* FAB */
+        .fab {
+            position: fixed; bottom: 90px; right: 20px;
+            width: 58px; height: 58px; border-radius: 50%;
+            background: var(--accent); display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: white;
+            box-shadow: 0 8px 30px var(--accent-glow);
+            z-index: 200; cursor: pointer;
+            animation: glow-pulse 3s ease-in-out infinite;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .fab.hidden { opacity: 0; transform: scale(0.6) translateY(40px); pointer-events: none; }
+        .fab:active { transform: scale(0.9); }
+ 
+        /* ITEM DETAIL */
+        .img-placeholder {
+            width: 100%; aspect-ratio: 16/9;
+            background: linear-gradient(135deg, var(--bg3), var(--bg2));
+            border-radius: var(--radius); margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 72px; border: 1px solid var(--border);
             position: relative; overflow: hidden;
         }
-
-        .page-enter { animation: fadeIn 0.4s var(--spring) both; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px) scale(0.99); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        .img-placeholder::after { content:''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.6) 100%); }
+ 
+        .seller-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px; background: var(--surface);
+            border: 1px solid var(--border); border-radius: var(--radius-sm);
+            margin-bottom: 16px; cursor: pointer; transition: background 0.15s;
         }
-
-        .container { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
-
-        /* ==================== НИЖНЕЕ МЕНЮ (НАВИГАЦИЯ) ==================== */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
-            display: flex; justify-content: space-around; align-items: center;
-            padding: 12px 16px 24px 16px; z-index: 500;
+        .seller-row:active { background: var(--surface-hov); }
+ 
+        .item-price-label { font-size: 12px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+        .item-price-val { font-family: var(--font-display); font-size: 36px; font-weight: 900; letter-spacing: -1px; margin-bottom: 20px; }
+ 
+        .btn-primary {
+            width: 100%; padding: 16px; background: var(--accent); color: white;
+            border-radius: var(--radius-sm); font-size: 15px; font-weight: 700;
+            text-align: center; cursor: pointer;
+            box-shadow: 0 6px 20px var(--accent-glow);
+            transition: all 0.15s; margin-bottom: 12px;
         }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            color: var(--text-muted); font-size: 11px; font-weight: 600; transition: 0.2s; cursor: pointer;
-            position: relative;
+        .btn-primary:active { transform: scale(0.98); box-shadow: none; }
+        .btn-secondary {
+            width: 100%; padding: 16px; background: var(--surface); color: var(--text);
+            border-radius: var(--radius-sm); font-size: 15px; font-weight: 700;
+            text-align: center; cursor: pointer; border: 1px solid var(--border);
+            transition: all 0.15s; margin-bottom: 12px;
         }
-        .nav-item.active { color: var(--accent-pink); }
-        .nav-icon { font-size: 24px; margin-bottom: 2px; }
-        .nav-badge {
-            position: absolute; top: -2px; right: -6px;
-            background: var(--accent-pink); color: white; font-size: 10px; font-weight: 800;
-            padding: 2px 6px; border-radius: 10px; border: 2px solid var(--bg-deep);
+        .btn-secondary:active { background: var(--surface-hov); }
+ 
+        .bargain-block { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+        .bargain-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .bargain-label { font-size: 14px; font-weight: 700; }
+        .bargain-cd { font-size: 11px; color: var(--text-2); background: var(--bg3); padding: 4px 8px; border-radius: 6px; }
+        .bid-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+        .bid-btn { padding: 12px; border-radius: var(--radius-sm); background: var(--bg3); border: 1px solid var(--border); font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; transition: all 0.15s; }
+        .bid-btn:active { background: var(--accent); border-color: var(--accent); color: white; }
+ 
+        /* CREATE */
+        .cat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+        .cat-btn { padding: 12px 8px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--border); text-align: center; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .cat-btn span:first-child { font-size: 22px; }
+        .cat-btn.sel { background: rgba(255,45,85,0.15); border-color: rgba(255,45,85,0.5); color: var(--accent); }
+        .cat-btn:active { transform: scale(0.94); }
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 14px; }
+        .toggle-label { font-size: 14px; font-weight: 600; }
+        input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--accent); cursor: pointer; }
+ 
+        /* DEALS */
+        .deal-status-active  { color: var(--green); }
+        .deal-status-done    { color: var(--text-2); }
+        .deal-status-dispute { color: var(--accent); }
+ 
+        /* PROFILE */
+        .profile-hero {
+            padding: 28px 20px; text-align: center;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); margin-bottom: 20px;
+            position: relative; overflow: hidden;
         }
-
-        /* ==================== СЕРВЕРЫ И ДАШБОРД ==================== */
-        .dash-user { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; cursor: pointer; }
-        .dash-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--glass-base); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        
-        .perks-scroll, .categories-scroll {
-            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 8px;
-            -ms-overflow-style: none; scrollbar-width: none;
-            -webkit-overflow-scrolling: touch; touch-action: pan-x; /* Фикс скролла */
+        .profile-hero::before {
+            content:''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 200px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,45,85,0.2), transparent 70%);
         }
-        .perks-scroll::-webkit-scrollbar, .categories-scroll::-webkit-scrollbar { display: none; }
-        
-        .chip {
-            white-space: nowrap; padding: 10px 16px; border-radius: 14px;
-            background: var(--glass-base); border: 1px solid var(--glass-border);
-            font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s;
+        .hero-ava {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: linear-gradient(135deg, #FF2D55, #FF6B35);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; margin: 0 auto 16px;
+            border: 3px solid rgba(255,45,85,0.5);
+            box-shadow: 0 0 30px rgba(255,45,85,0.3);
         }
-        .chip.active-cat { background: var(--accent-pink); border-color: var(--accent-pink); color: white; }
-
-        .servers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
-        .server-plate {
-            padding: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: var(--radius-md); cursor: pointer; transition: 0.2s; position: relative;
-            background-image: linear-gradient(to bottom right, rgba(255,255,255,0.05), transparent);
+        .hero-name { font-family: var(--font-display); font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 10px; }
+        .stats-row { display: flex; justify-content: space-around; background: rgba(0,0,0,0.25); border-radius: var(--radius-sm); padding: 14px; margin-top: 20px; }
+        .stat-item { text-align: center; }
+        .stat-val  { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+        .stat-lbl  { font-size: 11px; color: var(--text-2); margin-top: 3px; }
+        .rank-progress { margin-top: 18px; text-align: left; }
+        .rank-progress-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-2); margin-bottom: 7px; }
+        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 1s cubic-bezier(0.2,0.8,0.2,1); }
+ 
+        .review-card { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+        .review-card:last-child { border-bottom: none; }
+        .review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .review-author { font-size: 14px; font-weight: 700; }
+        .review-text { font-size: 13px; color: var(--text-2); line-height: 1.45; }
+ 
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:active { background: var(--surface-hov); }
+        .menu-ico  { font-size: 20px; width: 28px; text-align: center; }
+        .menu-text { font-size: 15px; font-weight: 600; flex: 1; }
+        .menu-arrow{ color: var(--text-3); font-size: 14px; }
+ 
+        /* TAB BAR */
+        .tab-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+            background: rgba(13,13,15,0.92);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex; padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
         }
-        .server-plate:active { transform: scale(0.96); }
-        .server-plate-name { font-size: 18px; font-weight: 900; letter-spacing: 0.5px; margin-bottom: 12px; display: block; }
-        .server-dot { position: absolute; top: 16px; right: 16px; width: 8px; height: 8px; border-radius: 50%; background: var(--srv-color); box-shadow: 0 0 10px var(--srv-color); }
-        
-        /* Новые стеклянные плашки статы */
-        .server-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-        .g-tag {
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.8);
-            border: 1px solid rgba(255,255,255,0.05);
+        .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; transition: all 0.15s; border-radius: 10px; }
+        .tab-item:active { background: var(--surface); }
+        .tab-ico   { font-size: 22px; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+        .tab-item.active .tab-ico { transform: scale(1.15); }
+        .tab-lbl   { font-size: 10px; font-weight: 600; color: var(--text-3); letter-spacing: 0.3px; }
+        .tab-item.active .tab-lbl { color: var(--accent); }
+ 
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: flex; align-items: flex-end; justify-content: center;
+            animation: fadeUp 0.25s ease;
         }
-
-        /* ==================== РЫНОК И ФИЛЬТРЫ ==================== */
-        .search-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
-        .input-dark {
-            flex: 1; padding: 14px 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
-            color: white; border-radius: 16px; font-size: 15px; outline: none; transition: 0.3s;
-        }
-        .input-dark:focus { border-color: var(--accent-pink); }
-        .filter-btn {
-            width: 50px; height: 50px; border-radius: 16px; background: var(--glass-base); border: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: 0.2s;
-        }
-        .filter-btn:active { background: var(--accent-pink); }
-
-        /* Свитчер Рынок / Ищут */
-        .segment-control {
-            display: flex; background: rgba(0,0,0,0.4); border-radius: 14px; padding: 4px; margin-bottom: 20px;
-        }
-        .segment-btn {
-            flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 700;
-            color: var(--text-muted); cursor: pointer; transition: 0.3s;
-        }
-        .segment-btn.active { background: var(--glass-base); color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-
-        .market-card { margin-bottom: 16px; padding: 16px; cursor: pointer; transition: 0.2s; }
-        .market-card:active { transform: scale(0.98); }
-
-        /* ==================== ЧАТЫ ==================== */
-        .chat-item {
-            display: flex; align-items: center; gap: 14px; padding: 16px;
-            border-bottom: 1px solid var(--glass-border); cursor: pointer; transition: 0.2s;
-        }
-        .chat-item:active { background: rgba(255,255,255,0.05); }
-        .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; font-size: 20px; position: relative; }
-        .online-dot { position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: #34C759; border: 2px solid var(--bg-deep); border-radius: 50%; }
-        
-        /* Внутри комнаты чата */
-        .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 15px; margin-bottom: 12px; line-height: 1.4; }
-        .chat-bubble.left { background: var(--glass-base); border-bottom-left-radius: 4px; align-self: flex-start; }
-        .chat-bubble.right { background: var(--accent-pink); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
-        
-        .deal-panel {
-            background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.3); border-radius: 16px; padding: 16px;
-            margin-bottom: 24px; text-align: center;
-        }
-
-        /* ==================== ШТОРКА ФИЛЬТРОВ ==================== */
-        .bottom-sheet {
-            position: fixed; bottom: -100%; left: 0; right: 0; background: #1c1c1e;
-            border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 24px;
-            z-index: 1000; transition: bottom 0.4s var(--spring); border-top: 1px solid var(--glass-border);
-        }
-        .bottom-sheet.open { bottom: 0; }
-        .sheet-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-            z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s;
-        }
-        .sheet-overlay.open { opacity: 1; pointer-events: all; }
-        .drag-pill { width: 40px; height: 5px; background: var(--glass-border); border-radius: 3px; margin: 0 auto 20px auto; }
-        
-        /* Ранги */
-        .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .badge-pro { background: linear-gradient(135deg, #0A84FF, #005BBB); color: #fff; }
+        .modal-sheet { background: #1a1a22; width: 100%; max-width: 520px; border-radius: 24px 24px 0 0; padding: 8px 20px 40px; border-top: 1px solid var(--border); }
+        .modal-handle { width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); margin: 12px auto 20px; }
+        .modal-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+ 
+        .chat-bubble { padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.4; margin-bottom: 8px; max-width: 80%; }
+        .chat-bubble.left  { background: var(--bg3); border-bottom-left-radius: 4px; align-self: flex-start; }
+        .chat-bubble.right { background: rgba(255,45,85,0.25); border-bottom-right-radius: 4px; align-self: flex-end; margin-left: auto; }
+        .chat-wrap { display: flex; flex-direction: column; margin: 16px 0; }
+ 
+        .qr-frame { background: white; padding: 12px; border-radius: 12px; display: inline-block; margin: 16px 0; }
     </style>
 </head>
 <body>
-    <div id="app" class="container"></div>
-
-    <!-- Общий элемент шторки фильтров -->
-    <div class="sheet-overlay" id="sheetOverlay" onclick="toggleFilters(false)"></div>
-    <div class="bottom-sheet" id="filtersSheet">
-        <div class="drag-pill"></div>
-        <h3 style="font-size:20px; font-weight:800; margin-bottom:20px;">Умные фильтры</h3>
-        
-        <label style="color:var(--text-muted); font-size:13px; margin-bottom:8px; display:block;">Сортировка</label>
-        <select class="input-dark">
-            <option>По умолчанию (Сначала новые)</option>
-            <option>Сначала дешевые</option>
-            <option>Сначала дорогие</option>
-            <option>Сначала высокий рейтинг продавца</option>
-        </select>
-
-        <label style="color:var(--text-muted); font-size:13px; margin-bottom:8px; display:block; margin-top:10px;">Цена</label>
-        <div style="display:flex; gap:10px;">
-            <input type="number" class="input-dark" placeholder="От">
-            <input type="number" class="input-dark" placeholder="До">
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0;">
-            <span style="font-weight:700;">Только с торгом</span>
-            <input type="checkbox" style="width:20px;height:20px;accent-color:var(--accent-pink);">
-        </div>
-
-        <div onclick="toggleFilters(false)" style="background:var(--accent-pink); padding:16px; border-radius:14px; text-align:center; font-weight:800; cursor:pointer;">Применить</div>
+ 
+<div id="app" class="wrap"></div>
+ 
+<nav class="tab-bar" id="tabBar">
+    <div class="tab-item active" data-tab="servers" onclick="switchTab('servers')">
+        <div class="tab-ico">🌐</div>
+        <div class="tab-lbl">Серверы</div>
     </div>
-
-    <!-- НИЖНЕЕ МЕНЮ -->
-    <div class="bottom-nav">
-        <div class="nav-item active" id="nav-servers" onclick="navigate('servers')">
-            <div class="nav-icon">🌐</div>
-            <span>Главная</span>
-        </div>
-        <div class="nav-item" id="nav-chats" onclick="navigate('chats')">
-            <div class="nav-icon">💬</div>
-            <span>Чаты</span>
-            <div class="nav-badge">2</div>
-        </div>
-        <div class="nav-item" id="nav-profile" onclick="navigate('profile')">
-            <div class="nav-icon">👤</div>
-            <span>Профиль</span>
-        </div>
+    <div class="tab-item" data-tab="market" onclick="switchTab('market')">
+        <div class="tab-ico">🛒</div>
+        <div class="tab-lbl">Маркет</div>
     </div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.setHeaderColor('#141414');
-        tg.setBackgroundColor('#141414');
-
-        const state = {
-            view: 'servers',
-            currentServer: { id: 1, name: "RED", color: "#FF3B30" },
-            marketType: 'wts', // wts (продажа) или wtb (ищут)
-            activeCategory: 'Все',
-            searchQuery: ''
-        };
-
-        const CATEGORIES = ['Все', '🚗 Авто', '🏠 Недвижимость', '💼 Бизнесы', '👕 Скины', '💍 Аксессуары', '📦 Разное'];
-
-        // --- НАВИГАЦИЯ ---
-        function navigate(view) {
-            state.view = view;
-            
-            // Обновляем активный таб внизу
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if(['servers', 'market'].includes(view)) document.getElementById('nav-servers').classList.add('active');
-            if(['chats', 'chat_room'].includes(view)) document.getElementById('nav-chats').classList.add('active');
-            if(view === 'profile') document.getElementById('nav-profile').classList.add('active');
-
-            render();
-            window.scrollTo(0,0);
-        }
-
-        function toggleFilters(show) {
-            const sheet = document.getElementById('filtersSheet');
-            const overlay = document.getElementById('sheetOverlay');
-            if (show) {
-                sheet.classList.add('open'); overlay.classList.add('open');
-            } else {
-                sheet.classList.remove('open'); overlay.classList.remove('open');
-            }
-        }
-
-        function selectCategory(cat) {
-            state.activeCategory = cat;
-            render();
-        }
-
-        function toggleMarketType(type) {
-            state.marketType = type;
-            render();
-        }
-
-        // --- ЭКРАН 1: ГЛАВНАЯ (СЕРВЕРЫ) ---
-        function renderServers() {
-            const SERVERS = [
-                {id:1,name:"RED",color:"#FF3B30", on: 850, ads: 120}, {id:2,name:"GREEN",color:"#34C759", on: 920, ads: 85},
-                {id:3,name:"BLUE",color:"#0A84FF", on: 780, ads: 45}, {id:23,name:"MOSCOW",color:"#FF2B3B", on: 999, ads: 210}
-            ];
-            
-            return `
-                <div class="page-enter">
-                    <div class="dash-user" onclick="navigate('profile')">
-                        <div class="dash-avatar">😎</div>
-                        <div>
-                            <div style="font-size:18px; font-weight:800;">Brutal_Player</div>
-                            <span class="badge badge-pro">Профессионал</span>
-                        </div>
+    <div class="tab-item" data-tab="deals" onclick="switchTab('deals')">
+        <div class="tab-ico">🤝</div>
+        <div class="tab-lbl">Сделки</div>
+    </div>
+    <div class="tab-item" data-tab="profile" onclick="switchTab('profile')">
+        <div class="tab-ico">👤</div>
+        <div class="tab-lbl">Профиль</div>
+    </div>
+</nav>
+ 
+<script>
+const tg = window.Telegram?.WebApp || { expand(){}, showAlert(m){alert(m)}, showConfirm(m,cb){cb(confirm(m))}, setHeaderColor(){}, setBackgroundColor(){} };
+tg.expand();
+tg.setHeaderColor?.('#0d0d0f');
+tg.setBackgroundColor?.('#0d0d0f');
+ 
+const SERVERS = [
+    {id:1,name:"RED",color:"#FF3B30",type:"RP"},{id:2,name:"GREEN",color:"#34C759",type:"PvP"},
+    {id:3,name:"BLUE",color:"#0A84FF",type:"RP"},{id:4,name:"YELLOW",color:"#FFCC00",type:"RP"},
+    {id:5,name:"ORANGE",color:"#FF9500",type:"PvP"},{id:6,name:"PURPLE",color:"#AF52DE",type:"Creative"},
+    {id:8,name:"PINK",color:"#FF2D55",type:"RP"},{id:10,name:"BLACK",color:"#8E8E93",type:"RP"},
+    {id:23,name:"MOSCOW",color:"#FF2B3B",type:"RP"},{id:24,name:"SPB",color:"#11A6FA",type:"RP"}
+];
+ 
+const ITEMS = [
+    {id:1,name:"BMW M5 F90",desc:"Полный тюнинг ФТ, прошивка спорт. Не бит не крашен.",price:4500000,seller:"@prodrift",deals:112,avatar:"🚗",rating:4.9,bargain:true,cat:"car",hot:true},
+    {id:2,name:"VIP Скин (Анонимно)",desc:"Продам редкий скин, сделка только через гаранта.",price:1250000,seller:"Анонимный",deals:45,avatar:"👤",rating:5.0,bargain:false,cat:"skin",hot:false},
+    {id:3,name:"Дом в Рублёвке",desc:"3 этажа + гараж на 4 места. Оплачен на месяц.",price:15000000,seller:"@realestate",deals:18,avatar:"🏠",rating:4.7,bargain:true,cat:"realty",hot:true},
+    {id:4,name:"Сим-карта 777777",desc:"Блатная симка, торг минимальный.",price:250000,seller:"@sim_boss",deals:2,avatar:"📱",rating:4.0,bargain:true,cat:"item",hot:false},
+    {id:5,name:"Вертолёт Maverick",desc:"Редкий хелик, полный бак. Безопасная сделка.",price:8900000,seller:"@airace",deals:67,avatar:"🚁",rating:4.8,bargain:true,cat:"car",hot:true}
+];
+ 
+const DEALS = [
+    {id:1,item:"BMW M5 F90",partner:"@buyer_one",status:"active",date:"сегодня",amount:4500000},
+    {id:2,item:"Desert Eagle",partner:"@gun_market",status:"done",date:"вчера",amount:600000},
+    {id:3,item:"Апарт. на Тверской",partner:"@house99",status:"dispute",date:"2 дня назад",amount:12000000}
+];
+ 
+const CATS = [
+    {id:"all",icon:"🌐",name:"Все"},{id:"car",icon:"🚗",name:"Транспорт"},
+    {id:"realty",icon:"🏠",name:"Недвижка"},{id:"skin",icon:"🥷",name:"Скины"},
+    {id:"item",icon:"🎒",name:"Предметы"},{id:"money",icon:"💰",name:"Валюта"},
+    {id:"service",icon:"⚙️",name:"Услуги"}
+];
+ 
+const ME = {
+    name:"Brutal_Player", deals:24, avatar:"😎", rating:4.9, active:3,
+    perks:[{i:"🥷",t:"Анонимность",on:true},{i:"🚀",t:"Топ в поиске",on:false},{i:"🛡",t:"Доверенный",on:true},{i:"💸",t:"Без комиссии",on:false}]
+};
+ 
+let S = { tab:'servers', view:'servers', server:null, item:null, search:'', cat:'all', selCat:null };
+ 
+function rank(n) {
+    if(n<=5)   return {name:"Новичок",     cls:"badge-novice",    icon:"🌱",next:5};
+    if(n<=20)  return {name:"Дилер",       cls:"badge-dealer",    icon:"💼",next:20};
+    if(n<=50)  return {name:"Профи",       cls:"badge-pro",       icon:"🔵",next:50};
+    if(n<=100) return {name:"Крёстный Отец",cls:"badge-godfather",icon:"👑",next:100};
+    return            {name:"Легенда",     cls:"badge-legend",    icon:"⚡",next:999};
+}
+ 
+function fmt(n) {
+    if(n>=1000000) return (n/1000000).toFixed(1).replace('.0','')+'М';
+    if(n>=1000)    return (n/1000).toFixed(0)+'К';
+    return n.toLocaleString('ru');
+}
+ 
+function bargainBtns(price) {
+    if(price<=300000)  return [{t:'-10К',v:10000},{t:'-20К',v:20000},{t:'-50К',v:50000},{t:'Своя сумма',v:0}];
+    if(price<=5000000) return [{t:'-50К',v:50000},{t:'-100К',v:100000},{t:'-200К',v:200000},{t:'-500К',v:500000}];
+    return [{t:'-500К',v:500000},{t:'-1М',v:1000000},{t:'-2М',v:2000000},{t:'Своя сумма',v:0}];
+}
+ 
+function starsHtml(r) {
+    let s=''; const full=Math.floor(r);
+    for(let i=0;i<full;i++) s+='★';
+    return `<span class="stars">${s}</span> <span style="font-size:12px;color:var(--text-2)">${r}</span>`;
+}
+ 
+function go(view, extra={}) {
+    Object.assign(S, extra, {view});
+    S.search = '';
+    render();
+    window.scrollTo(0,0);
+}
+ 
+function switchTab(tab) {
+    S.tab = tab;
+    if(tab==='servers')       go('servers');
+    else if(tab==='market') { if(!S.server) go('servers'); else go('market'); }
+    else if(tab==='deals')    go('deals');
+    else if(tab==='profile')  go('profile');
+    updateTabBar();
+}
+ 
+function updateTabBar() {
+    document.querySelectorAll('.tab-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.tab === S.tab);
+    });
+}
+ 
+/* ===== SCREENS ===== */
+ 
+function renderServers() {
+    const r = rank(ME.deals);
+    const filtered = SERVERS.filter(s => s.name.toLowerCase().includes(S.search.toLowerCase()));
+    return `<div class="page-enter">
+        <div class="profile-bar" onclick="go('profile')">
+            <div class="profile-left">
+                <div class="profile-ava">${ME.avatar}</div>
+                <div>
+                    <div class="profile-name">${ME.name}</div>
+                    <span class="badge ${r.cls}">${r.icon} ${r.name}</span>
+                </div>
+            </div>
+            <div class="notif-btn" onclick="event.stopPropagation();tg.showAlert('2 новых уведомления!')">
+                🔔<div class="notif-dot"></div>
+            </div>
+        </div>
+ 
+        <div class="promo" onclick="tg.showAlert('Оформление VIP...')">
+            <div class="promo-tag">Premium</div>
+            <h3>🔥 VIP со скидкой 50%</h3>
+            <p>Топ позиции, анонимность, выделенные объявления и без комиссии.</p>
+            <div class="promo-cta">Оформить за 99₽ →</div>
+        </div>
+ 
+        <div class="sec-head" style="margin-bottom:10px;">
+            <div class="sec-title">⚡ Улучшения</div>
+            <div class="sec-link" onclick="go('profile')">Магазин</div>
+        </div>
+        <div class="perks-scroll">
+            ${ME.perks.map(p=>`<div class="perk ${p.on?'on':'off'}" onclick="tg.showAlert('${p.on?'Активно!':'Нужен VIP или ранг выше'}')">${p.i} ${p.t}</div>`).join('')}
+        </div>
+ 
+        <div class="sec-head">
+            <div class="sec-title">🌐 Выбор сервера</div>
+        </div>
+        <div class="search-wrap">
+            <span class="ico">🔎</span>
+            <input class="search" type="text" placeholder="Найти сервер..." value="${S.search}" oninput="S.search=this.value;render()">
+        </div>
+ 
+        <div class="srv-grid">
+            ${filtered.map((s,i)=>{
+                const online=800+(s.id*13%200), ads=40+(s.id*7%100), fav=[3,23].includes(s.id);
+                return `<div class="srv-card" style="--srv-color:${s.color};animation:fadeUp 0.3s ${i*0.04}s both;" onclick="selServer(${s.id},'${s.color}')">
+                    <div class="srv-top">
+                        <div class="srv-name">${fav?'⭐ ':''}${s.name}</div>
+                        <div class="srv-dot"></div>
                     </div>
-
-                    <div style="font-size:22px; font-weight:800; margin-bottom:16px;">Выбери сервер</div>
-                    <div class="search-row">
-                        <input type="text" class="input-dark" placeholder="🔎 Найти сервер...">
+                    <div style="font-size:10px;color:var(--text-3);margin-bottom:8px;font-weight:600;">${s.type}</div>
+                    <div class="srv-stats">
+                        <div class="srv-stat">👥 ${online}</div>
+                        <div class="srv-stat">📦 ${ads}</div>
                     </div>
-
-                    <div class="servers-grid">
-                        ${SERVERS.map(s => `
-                            <div class="server-plate" style="--srv-color:${s.color};" onclick="state.currentServer = ${JSON.stringify(s)}; navigate('market')">
-                                <div class="server-dot"></div>
-                                <span class="server-plate-name">${s.name}</span>
-                                <div class="server-tags">
-                                    <span class="g-tag">👥 ${s.on}</span>
-                                    <span class="g-tag">📦 ${s.ads} лотов</span>
-                                </div>
-                            </div>
-                        `).join('')}
+                </div>`;
+            }).join('')}
+        </div>
+    </div>`;
+}
+ 
+function renderMarket() {
+    const items = ITEMS.filter(it => {
+        const qOk = it.name.toLowerCase().includes(S.search.toLowerCase()) || it.seller.toLowerCase().includes(S.search.toLowerCase());
+        const catOk = S.cat==='all' || it.cat===S.cat;
+        return qOk && catOk;
+    });
+    const srv = S.server;
+    return `<div class="page-enter">
+        <div class="top-nav">
+            <div class="nav-back" onclick="go('servers')">←</div>
+            <div class="nav-title" style="color:${srv?.color||'var(--accent)'};">${srv?.name||'GLOBAL'} MARKET</div>
+            <div style="width:42px;"></div>
+        </div>
+ 
+        <div class="search-wrap">
+            <span class="ico">🔎</span>
+            <input class="search" type="text" placeholder="Лот или @продавец..." value="${S.search}" oninput="S.search=this.value;render()">
+        </div>
+ 
+        <div class="filter-bar">
+            ${CATS.map(c=>`<div class="filter-chip ${S.cat===c.id?'active':''}" onclick="S.cat='${c.id}';render()">${c.icon} ${c.name}</div>`).join('')}
+        </div>
+ 
+        ${items.length===0?`<div style="text-align:center;padding:60px 20px;color:var(--text-3);">
+            <div style="font-size:48px;margin-bottom:12px;">🔍</div>
+            <div style="font-size:16px;font-weight:600;">Ничего не найдено</div>
+        </div>`:''}
+ 
+        ${items.map((it,i)=>{
+            const r=rank(it.deals);
+            return `<div class="mcard" style="animation:fadeUp 0.3s ${i*0.05}s both;" onclick="openItem(${it.id})">
+                ${it.hot?'<div class="hot-badge">🔥 HOT</div>':''}
+                <div class="mcard-top">
+                    <div class="mcard-ava">${it.avatar}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="mcard-seller">${it.seller}</div>
+                        <div class="mcard-meta">${starsHtml(it.rating)} <span class="badge ${r.cls}">${r.name}</span></div>
                     </div>
                 </div>
-            `;
-        }
-
-        // --- ЭКРАН 2: РЫНОК (С ФИЛЬТРАМИ И КАТЕГОРИЯМИ) ---
-        function renderMarket() {
-            const isWTS = state.marketType === 'wts';
-            
-            return `
-                <div class="page-enter">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                        <div onclick="navigate('servers')" style="background:var(--glass-base); padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer;">← Назад</div>
-                        <div style="font-size:20px; font-weight:800; color:var(--accent-pink);">${state.currentServer.name}</div>
-                        <div style="width:70px;"></div>
+                <div class="mcard-title">${it.name}</div>
+                <div class="mcard-desc">${it.desc.substring(0,55)}${it.desc.length>55?'…':''}</div>
+                <div class="mcard-footer">
+                    <div>
+                        <div class="mcard-price">${fmt(it.price)} ₽</div>
+                        ${it.bargain?'<div class="mcard-bargain" style="margin-top:4px;">Торг уместен</div>':''}
                     </div>
-
-                    <!-- Свитчер Продажа / Покупка -->
-                    <div class="segment-control">
-                        <div class="segment-btn ${isWTS ? 'active' : ''}" onclick="toggleMarketType('wts')">🛒 Продажа</div>
-                        <div class="segment-btn ${!isWTS ? 'active' : ''}" onclick="toggleMarketType('wtb')">📢 Ищут купить</div>
-                    </div>
-
-                    <!-- Поиск и Фильтр -->
-                    <div class="search-row">
-                        <input type="text" class="input-dark" placeholder="${isWTS ? '🔎 Поиск лота...' : '🔎 Что ищут игроки...'}">
-                        <div class="filter-btn" onclick="toggleFilters(true)">🎛</div>
-                    </div>
-
-                    <!-- Категории -->
-                    <div class="categories-scroll">
-                        ${CATEGORIES.map(c => `
-                            <div class="chip ${state.activeCategory === c ? 'active-cat' : ''}" onclick="selectCategory('${c}')">${c}</div>
-                        `).join('')}
-                    </div>
-
-                    <div style="margin-top:20px;">
-                        ${isWTS ? `
-                            <div class="glass-relief market-card" onclick="tg.showAlert('Тут открывается карточка лота')">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                                    <span style="font-weight:700;">@prodrift <span style="color:#34C759;font-size:12px;">⭐ 4.9</span></span>
-                                    <span class="badge badge-pro">Профи</span>
-                                </div>
-                                <div style="font-size:18px; font-weight:800; margin-bottom:8px;">BMW M5 F90 (ФТ)</div>
-                                <div style="font-size:22px; font-weight:900; color:var(--accent-pink);">4 500 000 ₽</div>
-                            </div>
-                        ` : `
-                            <div class="glass-relief market-card" style="border-left: 4px solid #0A84FF;">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                                    <span style="font-weight:700; color:#0A84FF;">Поиск товара</span>
-                                    <span style="color:var(--text-muted); font-size:12px;">2 мин назад</span>
-                                </div>
-                                <div style="font-size:16px; font-weight:800; margin-bottom:8px;">Куплю Транспортную Компанию (ТК)</div>
-                                <div style="font-size:14px; color:var(--text-muted); margin-bottom:12px;">Бюджет до 50кк, пишите только с реальными предложениями.</div>
-                                <div style="background:#0A84FF; padding:12px; border-radius:12px; text-align:center; font-weight:700;">Предложить свой товар</div>
-                            </div>
-                        `}
-                    </div>
+                    <div class="mcard-btn">Открыть →</div>
                 </div>
-            `;
-        }
-
-        // --- ЭКРАН 3: СПИСОК ЧАТОВ ---
-        function renderChats() {
-            return `
-                <div class="page-enter">
-                    <h2 style="font-size:28px; font-weight:800; margin-bottom:20px;">Чаты (Сделки)</h2>
-                    
-                    <div class="glass-relief">
-                        <div class="chat-item" onclick="navigate('chat_room')">
-                            <div class="chat-avatar">👤<div class="online-dot"></div></div>
-                            <div style="flex:1;">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                                    <span style="font-weight:800; font-size:16px;">@buyer_2024</span>
-                                    <span style="font-size:12px; color:var(--text-muted);">14:30</span>
-                                </div>
-                                <div style="font-size:14px; color:var(--text-muted);">Лот: BMW M5 F90</div>
-                                <div style="font-size:14px; color:white; margin-top:4px;">Ок, жду тебя на б/у рынке.</div>
-                            </div>
-                        </div>
-
-                        <div class="chat-item" onclick="navigate('chat_room')">
-                            <div class="chat-avatar" style="background:var(--accent-pink);">🤖</div>
-                            <div style="flex:1;">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                                    <span style="font-weight:800; font-size:16px;">Анонимная сделка #882</span>
-                                    <span style="font-size:12px; color:var(--text-muted);">Вчера</span>
-                                </div>
-                                <div style="font-size:14px; color:var(--text-muted);">Лот: VIP Скин</div>
-                                <div style="font-size:14px; color:#34C759; margin-top:4px;">Сделка успешно завершена!</div>
-                            </div>
-                        </div>
-                    </div>
+            </div>`;
+        }).join('')}
+ 
+        <div class="fab" id="fab" onclick="go('create')">+</div>
+    </div>`;
+}
+ 
+function renderItem() {
+    const it = S.item;
+    const r = rank(it.deals);
+    const btns = it.bargain ? bargainBtns(it.price) : [];
+    return `<div class="page-enter">
+        <div class="top-nav">
+            <div class="nav-back" onclick="go('market')">←</div>
+            <div class="nav-title">Объявление</div>
+            <div style="width:42px;text-align:right;font-size:20px;cursor:pointer;" onclick="tg.showAlert('Скопировано: t.me/bot?start=ad_${it.id}')">🔗</div>
+        </div>
+ 
+        <div class="img-placeholder pop"><div style="position:relative;z-index:1;">${it.avatar}</div></div>
+ 
+        <div class="seller-row" onclick="tg.showAlert('Профиль продавца: ${it.seller}')">
+            <div class="mcard-ava">${it.avatar}</div>
+            <div style="flex:1;">
+                <div style="font-size:15px;font-weight:700;margin-bottom:4px;">${it.seller}</div>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    ${starsHtml(it.rating)}
+                    <span style="color:var(--text-2);font-size:12px;">${it.deals} сделок</span>
+                    <span class="badge ${r.cls}">${r.name}</span>
                 </div>
-            `;
-        }
-
-        // --- ЭКРАН 4: КОМНАТА ЧАТА (СДЕЛОЧНАЯ) ---
-        function renderChatRoom() {
-            return `
-                <div class="page-enter" style="display:flex; flex-direction:column; min-height:80vh;">
-                    <div style="display:flex; align-items:center; gap:12px; padding-bottom:16px; border-bottom:1px solid var(--glass-border); margin-bottom:20px;">
-                        <div onclick="navigate('chats')" style="background:var(--glass-base); padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer;">←</div>
-                        <div class="chat-avatar" style="width:40px; height:40px; font-size:16px;">👤</div>
-                        <div>
-                            <div style="font-weight:800;">@buyer_2024</div>
-                            <div style="font-size:12px; color:#34C759;">В сети</div>
-                        </div>
-                    </div>
-
-                    <!-- ПАНЕЛЬ СДЕЛКИ -->
-                    <div class="deal-panel">
-                        <div style="font-weight:800; margin-bottom:6px;">Сделка: BMW M5 F90</div>
-                        <div style="font-size:13px; margin-bottom:16px; color:rgba(52,199,89,0.8);">Для безопасного обмена оба должны подтвердить успешную передачу.</div>
-                        <div style="background:#34C759; color:black; padding:12px; border-radius:12px; font-weight:800; cursor:pointer;" onclick="this.innerHTML='Ожидаем второго (1/2)'; this.style.opacity='0.5';">
-                            ✅ Подтвердить сделку (0/2)
-                        </div>
-                    </div>
-
-                    <!-- СООБЩЕНИЯ -->
-                    <div style="display:flex; flex-direction:column; flex:1;">
-                        <div class="chat-bubble left">Привет! Машина еще в продаже? Готов забрать за 4.2кк</div>
-                        <div class="chat-bubble right">Привет, да. Подъезжай на низкий автосалон.</div>
-                        <div class="chat-bubble left">Ок, жду тебя на б/у рынке.</div>
-                    </div>
-
-                    <!-- ИНПУТ ВВОДА -->
-                    <div style="display:flex; gap:10px; margin-top:20px;">
-                        <input type="text" class="input-dark" style="margin:0; border-radius:20px;" placeholder="Написать сообщение...">
-                        <div style="width:50px; height:50px; background:var(--accent-pink); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer;">➤</div>
-                    </div>
+            </div>
+            <div style="color:var(--text-3)">›</div>
+        </div>
+ 
+        <h2 style="font-family:var(--font-display);font-size:22px;font-weight:700;letter-spacing:-0.4px;margin-bottom:8px;">${it.name}</h2>
+        <p style="font-size:14px;color:var(--text-2);line-height:1.6;margin-bottom:20px;">${it.desc}</p>
+ 
+        <div class="item-price-label">Цена</div>
+        <div class="item-price-val">${it.price.toLocaleString('ru-RU')} <span style="font-size:20px;color:var(--text-2)">₽</span></div>
+ 
+        <div class="btn-primary" onclick="startDeal()">🤝 Купить через Гаранта</div>
+        <div class="btn-secondary" onclick="tg.showAlert('Открываем чат с ${it.seller}...')">💬 Написать продавцу</div>
+ 
+        ${it.bargain?`<div class="bargain-block">
+            <div class="bargain-title">
+                <div class="bargain-label">💰 Предложить цену</div>
+                <div class="bargain-cd">⏱ КД: 30 мин</div>
+            </div>
+            <div class="bid-grid">${btns.map(b=>`<div class="bid-btn" onclick="sendBid('${b.t}')">${b.t}</div>`).join('')}</div>
+        </div>`:`<div style="text-align:center;padding:14px;background:rgba(0,0,0,0.2);border-radius:var(--radius-sm);font-size:13px;color:var(--text-2);">🔒 Продавец отключил торг</div>`}
+    </div>`;
+}
+ 
+function renderCreate() {
+    const catOptions = [
+        {id:'car',i:'🚗',n:'Транспорт'},{id:'realty',i:'🏠',n:'Недвижка'},
+        {id:'skin',i:'🥷',n:'Скины'},{id:'item',i:'🎒',n:'Предметы'},
+        {id:'money',i:'💰',n:'Валюта'},{id:'service',i:'⚙️',n:'Услуга'}
+    ];
+    return `<div class="page-enter">
+        <div class="top-nav">
+            <div class="nav-back" onclick="go('market')">←</div>
+            <div class="nav-title">Новый лот</div>
+            <div style="width:42px;"></div>
+        </div>
+ 
+        <div class="card" style="padding:20px;margin-bottom:16px;">
+            <div class="lbl">Категория</div>
+            <div class="cat-grid">
+                ${catOptions.map(c=>`<div class="cat-btn ${S.selCat===c.id?'sel':''}" onclick="S.selCat='${c.id}';render()"><span>${c.i}</span><span>${c.n}</span></div>`).join('')}
+            </div>
+ 
+            <div class="lbl">Название</div>
+            <input type="text" class="inp" placeholder="Например: BMW M5 F90">
+ 
+            <div class="lbl">Описание</div>
+            <textarea class="inp" rows="3" placeholder="Опишите товар подробнее..."></textarea>
+ 
+            <div class="lbl">Цена (игровые ₽)</div>
+            <input type="number" class="inp" placeholder="5 000 000">
+ 
+            <div class="lbl">Способ связи</div>
+            <select class="inp">
+                <option>📢 Публично (@username)</option>
+                <option>👤 Анонимно (только бот-гарант)</option>
+            </select>
+ 
+            <div class="toggle-row"><div class="toggle-label">💰 Разрешить торг</div><input type="checkbox" checked></div>
+            <div class="toggle-row"><div class="toggle-label">📢 Опубликовать в канал сервера</div><input type="checkbox" checked></div>
+        </div>
+ 
+        <div class="btn-primary" onclick="publishAd()">Опубликовать лот</div>
+    </div>`;
+}
+ 
+function renderDeals() {
+    const statusColor = {active:'var(--green)',done:'var(--text-2)',dispute:'var(--accent)'};
+    const statusLabel = {active:'🟢 Активна',done:'✅ Завершена',dispute:'⚠️ Спор'};
+    return `<div class="page-enter">
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:24px;letter-spacing:-0.3px;">🤝 Мои сделки</div>
+        ${DEALS.map((d,i)=>`
+        <div class="card" style="padding:16px;margin-bottom:12px;animation:fadeUp 0.3s ${i*0.06}s both;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                <div style="font-size:15px;font-weight:700;flex:1;">${d.item}</div>
+                <div style="font-size:12px;font-weight:700;color:${statusColor[d.status]};margin-left:8px;">${statusLabel[d.status]}</div>
+            </div>
+            <div style="display:flex;gap:16px;margin-bottom:12px;">
+                <div style="font-size:12px;color:var(--text-2);">С ${d.partner}</div>
+                <div style="font-size:12px;color:var(--text-3);">${d.date}</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-family:var(--font-display);font-size:16px;font-weight:700;">${d.amount.toLocaleString('ru-RU')} ₽</div>
+                <div style="font-size:13px;font-weight:600;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:999px;cursor:pointer;" onclick="tg.showAlert('Детали сделки...')">
+                    ${d.status==='active'?'Чат →':'Детали →'}
                 </div>
-            `;
-        }
-
-        // --- РЕНДЕР ---
-        function render() {
-            let html = '';
-            if (state.view === 'servers') html = renderServers();
-            else if (state.view === 'market') html = renderMarket();
-            else if (state.view === 'chats') html = renderChats();
-            else if (state.view === 'chat_room') html = renderChatRoom();
-            else if (state.view === 'profile') html = `<div class="page-enter"><h2 style="font-size:28px;font-weight:800;">Профиль</h2><p style="color:gray;margin-top:10px;">В разработке...</p></div>`;
-            
-            document.getElementById('app').innerHTML = html;
-        }
-
-        render();
-    </script>
+            </div>
+        </div>`).join('')}
+    </div>`;
+}
+ 
+function renderProfile() {
+    const r = rank(ME.deals);
+    const progress = Math.min((ME.deals / r.next)*100, 100);
+    const nextRankName = rank(r.next+1).name;
+    return `<div class="page-enter">
+        <div class="profile-hero">
+            <div class="hero-ava">${ME.avatar}</div>
+            <div class="hero-name">${ME.name}</div>
+            <span class="badge ${r.cls}" style="font-size:12px;padding:6px 14px;">${r.icon} ${r.name}</span>
+            <div class="stats-row">
+                <div class="stat-item"><div class="stat-val">${ME.deals}</div><div class="stat-lbl">Сделок</div></div>
+                <div class="stat-item"><div class="stat-val" style="color:var(--gold);">${ME.rating}</div><div class="stat-lbl">Рейтинг</div></div>
+                <div class="stat-item"><div class="stat-val">${ME.active}</div><div class="stat-lbl">Активных</div></div>
+            </div>
+            <div class="rank-progress">
+                <div class="rank-progress-top"><span>До «${nextRankName}»</span><span>${ME.deals} / ${r.next}</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+            </div>
+        </div>
+ 
+        <div class="sec-head"><div class="sec-title">⭐ Отзывы</div></div>
+        <div class="card" style="margin-bottom:20px;">
+            <div class="review-card">
+                <div class="review-top"><div class="review-author">@buyer_one</div><div>${starsHtml(5)}</div></div>
+                <div class="review-text">Всё чётко, перевёл первым. Советую!</div>
+            </div>
+            <div class="review-card">
+                <div class="review-top"><div class="review-author">Анонимный</div><div>${starsHtml(4)}</div></div>
+                <div class="review-text">Норм продавец, сделка через бота прошла ок.</div>
+            </div>
+        </div>
+ 
+        <div class="sec-head"><div class="sec-title">⚙️ Настройки</div></div>
+        <div class="card" style="margin-bottom:20px;">
+            ${[{i:'📢',t:'Мои объявления'},{i:'🤝',t:'История сделок'},{i:'🥷',t:'Режим анонимности'},{i:'🌙',t:'Тема оформления'},{i:'🔔',t:'Уведомления'},{i:'⭐',t:'Избранные серверы'}]
+            .map(m=>`<div class="menu-item" onclick="tg.showAlert('${m.t} — скоро доступно!')">
+                <div class="menu-ico">${m.i}</div>
+                <div class="menu-text">${m.t}</div>
+                <div class="menu-arrow">›</div>
+            </div>`).join('')}
+        </div>
+    </div>`;
+}
+ 
+/* ===== ACTIONS ===== */
+window.selServer = (id, color) => {
+    S.server = SERVERS.find(s=>s.id===id);
+    S.cat = 'all'; S.tab = 'market';
+    document.documentElement.style.setProperty('--accent', color);
+    go('market'); updateTabBar();
+};
+ 
+window.openItem = (id) => {
+    S.item = ITEMS.find(i=>i.id===id);
+    go('item');
+};
+ 
+window.startDeal = () => {
+    const it = S.item;
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `<div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">🤝 Открытие сделки</div>
+        <p style="font-size:14px;color:var(--text-2);margin-bottom:16px;">Бот создаст защищённый чат между тобой и продавцом ${it.seller}</p>
+        <div class="chat-wrap">
+            <div class="chat-bubble left">Привет! Интересует "${it.name}"</div>
+            <div class="chat-bubble right">Привет! Готов к сделке</div>
+            <div class="chat-bubble left">Ок, подтверждаю через бота</div>
+        </div>
+        <div class="btn-primary" id="confirmBtn" onclick="confirmDeal(this)">✅ Создать сделку</div>
+        <div class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Отмена</div>
+    </div>`;
+    document.body.appendChild(overlay);
+};
+ 
+window.confirmDeal = (btn) => {
+    btn.textContent = '⏳ Создаём чат...';
+    setTimeout(()=>{ document.querySelector('.modal-overlay')?.remove(); tg.showAlert('✅ Сделка открыта! Проверь ЛС бота.'); }, 1200);
+};
+ 
+window.sendBid = (t) => {
+    if(t==='Своя сумма') tg.showAlert('Введи свою сумму. Функция в разработке.');
+    else tg.showAlert(`Предложение «${t}» отправлено!\nСледующее через 30 минут.`);
+};
+ 
+window.publishAd = () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `<div class="modal-sheet" style="text-align:center;">
+        <div class="modal-handle"></div>
+        <div style="font-size:56px;margin-bottom:16px;">✅</div>
+        <div class="modal-title">Лот опубликован!</div>
+        <p style="font-size:14px;color:var(--text-2);margin:8px 0 16px;">Поделись ссылкой, чтобы продать быстрее</p>
+        <div class="qr-frame">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=t.me/bot?start=ad_new" style="border-radius:6px;display:block;">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+            <div style="flex:1;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-weight:700;cursor:pointer;text-align:center;" onclick="this.closest('.modal-overlay').remove();go('market')">Закрыть</div>
+            <div style="flex:2;padding:14px;background:var(--accent);color:white;border-radius:var(--radius-sm);font-weight:700;cursor:pointer;text-align:center;" onclick="tg.showAlert('Ссылка скопирована!');this.closest('.modal-overlay').remove();go('market')">📋 Скопировать</div>
+        </div>
+    </div>`;
+    document.body.appendChild(overlay);
+};
+ 
+/* ===== RENDER ===== */
+function render() {
+    const app = document.getElementById('app');
+    if(S.view==='servers') app.innerHTML = renderServers();
+    else if(S.view==='market')  app.innerHTML = renderMarket();
+    else if(S.view==='item')    app.innerHTML = renderItem();
+    else if(S.view==='create')  app.innerHTML = renderCreate();
+    else if(S.view==='deals')   app.innerHTML = renderDeals();
+    else if(S.view==='profile') app.innerHTML = renderProfile();
+ 
+    if(S.view==='market') {
+        const fab = document.getElementById('fab');
+        let last = 0;
+        window.onscroll = () => { const c=window.scrollY; if(fab) fab.classList.toggle('hidden',c>last&&c>60); last=c; };
+    } else { window.onscroll = null; }
+ 
+    updateTabBar();
+}
+ 
+render();
+</script>
 </body>
-</html>
