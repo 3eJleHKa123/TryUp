@@ -8,222 +8,206 @@
     <style>
         :root {
             --bg-deep: #141414;
-            --glass-base: rgba(255, 255, 255, 0.085);
-            --glass-border: rgba(255, 255, 255, 0.13);
+            --glass-base: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --accent-pink: #FF2D55;
             --text-main: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.68);
+            --text-muted: rgba(255, 255, 255, 0.6);
             --radius-md: 20px;
             --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-        }
-
-        body {
-            background: var(--bg-deep);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .glass-relief {
-            background: var(--glass-base);
-            backdrop-filter: blur(32px) saturate(180%);
-            -webkit-backdrop-filter: blur(32px) saturate(180%);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-relief:not(.server-plate):not(.no-shine)::after {
-            content: '';
-            position: absolute;
-            inset: -80% -200% -80% -200%;
-            background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.28) 48%, rgba(255,255,255,0.28) 52%, transparent 65%);
-            transform: skewX(-18deg);
-            animation: liquidShine 7s linear infinite;
-            pointer-events: none;
-            opacity: 0.15;
-            z-index: 1;
-        }
-
-        @keyframes liquidShine {
-            0% { transform: translateX(-140%) skewX(-18deg); }
-            100% { transform: translateX(240%) skewX(-18deg); }
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px 16px 180px 16px;
-            min-height: 100vh;
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-
-        /* ==================== ДАШБОРД (НОВОЕ) ==================== */
-        .dashboard-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 24px; padding: 8px 0;
-            cursor: pointer;
-        }
-        .dash-user { display: flex; align-items: center; gap: 14px; }
-        .dash-avatar {
-            width: 54px; height: 54px; border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-            border: 2px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: center; font-size: 26px;
-        }
-        .dash-name { font-size: 19px; font-weight: 800; margin-bottom: 4px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
         
-        .promo-banner {
-            background: linear-gradient(135deg, rgba(255,45,85,0.2), rgba(0,0,0,0.4));
-            padding: 20px; border-radius: var(--radius-md);
-            border: 1px solid rgba(255,45,85,0.4);
-            margin-bottom: 24px; position: relative; overflow: hidden;
-        }
-        .promo-tag {
-            position: absolute; top: 12px; right: 12px;
-            background: var(--accent-pink); color: white;
-            font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase;
+        body {
+            background: var(--bg-deep); color: var(--text-main);
+            min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+            padding-bottom: 90px; /* Отступ под нижнее меню */
         }
 
-        .perks-scroll {
-            display: flex; gap: 10px; overflow-x: auto;
-            padding-bottom: 12px; margin-bottom: 8px;
+        /* УТИЛИТЫ И СТЕКЛО */
+        .glass-relief {
+            background: var(--glass-base); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-radius: var(--radius-md); border: 1px solid var(--glass-border);
+            position: relative; overflow: hidden;
+        }
+
+        .page-enter { animation: fadeIn 0.4s var(--spring) both; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
+
+        /* ==================== НИЖНЕЕ МЕНЮ (НАВИГАЦИЯ) ==================== */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 12px 16px 24px 16px; z-index: 500;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: var(--text-muted); font-size: 11px; font-weight: 600; transition: 0.2s; cursor: pointer;
+            position: relative;
+        }
+        .nav-item.active { color: var(--accent-pink); }
+        .nav-icon { font-size: 24px; margin-bottom: 2px; }
+        .nav-badge {
+            position: absolute; top: -2px; right: -6px;
+            background: var(--accent-pink); color: white; font-size: 10px; font-weight: 800;
+            padding: 2px 6px; border-radius: 10px; border: 2px solid var(--bg-deep);
+        }
+
+        /* ==================== СЕРВЕРЫ И ДАШБОРД ==================== */
+        .dash-user { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; cursor: pointer; }
+        .dash-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--glass-base); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        
+        .perks-scroll, .categories-scroll {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 8px;
             -ms-overflow-style: none; scrollbar-width: none;
+            -webkit-overflow-scrolling: touch; touch-action: pan-x; /* Фикс скролла */
         }
-        .perks-scroll::-webkit-scrollbar { display: none; }
-        .perk-chip {
-            white-space: nowrap; padding: 12px 16px; border-radius: 14px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
-            font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;
+        .perks-scroll::-webkit-scrollbar, .categories-scroll::-webkit-scrollbar { display: none; }
+        
+        .chip {
+            white-space: nowrap; padding: 10px 16px; border-radius: 14px;
+            background: var(--glass-base); border: 1px solid var(--glass-border);
+            font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s;
         }
-        .perk-chip.active {
-            background: rgba(52,199,89,0.15); border-color: rgba(52,199,89,0.5); color: #34C759;
-        }
-        .perk-chip.locked {
-            opacity: 0.5; filter: grayscale(1);
-        }
+        .chip.active-cat { background: var(--accent-pink); border-color: var(--accent-pink); color: white; }
 
-        /* ==================== СЕРВЕРЫ ==================== */
-        .servers-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
+        .servers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
         .server-plate {
-            padding: 16px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-md);
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            transition: all 0.25s var(--spring);
+            padding: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-md); cursor: pointer; transition: 0.2s; position: relative;
+            background-image: linear-gradient(to bottom right, rgba(255,255,255,0.05), transparent);
+        }
+        .server-plate:active { transform: scale(0.96); }
+        .server-plate-name { font-size: 18px; font-weight: 900; letter-spacing: 0.5px; margin-bottom: 12px; display: block; }
+        .server-dot { position: absolute; top: 16px; right: 16px; width: 8px; height: 8px; border-radius: 50%; background: var(--srv-color); box-shadow: 0 0 10px var(--srv-color); }
+        
+        /* Новые стеклянные плашки статы */
+        .server-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .g-tag {
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .server-plate:active {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 2px color-mix(in srgb, var(--srv-color) 45%, transparent);
-        }
-
-        .server-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .server-plate-name {
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: 0.4px;
-        }
-
-        .server-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--srv-color);
-            box-shadow: 0 0 12px 2px var(--srv-color);
-        }
-
-        .server-stats {
-            font-size: 11px;
-            color: var(--text-muted);
-            display: flex;
-            gap: 8px;
-        }
-
-        /* ==================== ИНПУТЫ И ФОРМЫ ==================== */
+        /* ==================== РЫНОК И ФИЛЬТРЫ ==================== */
+        .search-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
         .input-dark {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-            color: white;
-            border-radius: 16px;
-            font-size: 16px;
-            outline: none;
-            margin-bottom: 12px;
-            transition: border-color 0.3s;
+            flex: 1; padding: 14px 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            color: white; border-radius: 16px; font-size: 15px; outline: none; transition: 0.3s;
         }
         .input-dark:focus { border-color: var(--accent-pink); }
-        select.input-dark { appearance: none; -webkit-appearance: none; }
-
-        /* ==================== РАНГИ И БЕЙДЖИ ==================== */
-        .badge {
-            display: inline-block; padding: 4px 10px; border-radius: 8px;
-            font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+        .filter-btn {
+            width: 50px; height: 50px; border-radius: 16px; background: var(--glass-base); border: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: 0.2s;
         }
-        .badge-legend { background: linear-gradient(135deg, #FFD700, #FBA500); color: #000; }
+        .filter-btn:active { background: var(--accent-pink); }
+
+        /* Свитчер Рынок / Ищут */
+        .segment-control {
+            display: flex; background: rgba(0,0,0,0.4); border-radius: 14px; padding: 4px; margin-bottom: 20px;
+        }
+        .segment-btn {
+            flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 700;
+            color: var(--text-muted); cursor: pointer; transition: 0.3s;
+        }
+        .segment-btn.active { background: var(--glass-base); color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+
+        .market-card { margin-bottom: 16px; padding: 16px; cursor: pointer; transition: 0.2s; }
+        .market-card:active { transform: scale(0.98); }
+
+        /* ==================== ЧАТЫ ==================== */
+        .chat-item {
+            display: flex; align-items: center; gap: 14px; padding: 16px;
+            border-bottom: 1px solid var(--glass-border); cursor: pointer; transition: 0.2s;
+        }
+        .chat-item:active { background: rgba(255,255,255,0.05); }
+        .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; font-size: 20px; position: relative; }
+        .online-dot { position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: #34C759; border: 2px solid var(--bg-deep); border-radius: 50%; }
+        
+        /* Внутри комнаты чата */
+        .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 15px; margin-bottom: 12px; line-height: 1.4; }
+        .chat-bubble.left { background: var(--glass-base); border-bottom-left-radius: 4px; align-self: flex-start; }
+        .chat-bubble.right { background: var(--accent-pink); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
+        
+        .deal-panel {
+            background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.3); border-radius: 16px; padding: 16px;
+            margin-bottom: 24px; text-align: center;
+        }
+
+        /* ==================== ШТОРКА ФИЛЬТРОВ ==================== */
+        .bottom-sheet {
+            position: fixed; bottom: -100%; left: 0; right: 0; background: #1c1c1e;
+            border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 24px;
+            z-index: 1000; transition: bottom 0.4s var(--spring); border-top: 1px solid var(--glass-border);
+        }
+        .bottom-sheet.open { bottom: 0; }
+        .sheet-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .sheet-overlay.open { opacity: 1; pointer-events: all; }
+        .drag-pill { width: 40px; height: 5px; background: var(--glass-border); border-radius: 3px; margin: 0 auto 20px auto; }
+        
+        /* Ранги */
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
         .badge-pro { background: linear-gradient(135deg, #0A84FF, #005BBB); color: #fff; }
-        .badge-dealer { background: linear-gradient(135deg, #34C759, #248A3D); color: #fff; }
-
-        /* ==================== УМНЫЙ ТОРГ ==================== */
-        .bid-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
-        .bid-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 12px; border-radius: 12px; text-align: center; font-weight: 700; color: white; cursor: pointer; transition: 0.2s; }
-        .bid-btn:active { background: var(--accent-pink); border-color: var(--accent-pink); }
-
-        /* ==================== FAB КНОПКА ==================== */
-        .fab {
-            position: fixed; bottom: 24px; right: 24px; width: 62px; height: 62px;
-            background: rgba(255, 45, 85, 0.9); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 32px;
-            box-shadow: 0 10px 25px color-mix(in srgb, var(--accent-pink) 50%, transparent);
-            z-index: 300; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .fab.hidden { opacity: 0; transform: scale(0.7) translateY(40px); pointer-events: none; }
-
-        /* ==================== КАРТОЧКИ ОБЪЯВЛЕНИЙ ==================== */
-        .market-card { margin-bottom: 20px; padding: 20px; cursor: pointer; transition: transform 0.2s; }
-        .market-card:active { transform: scale(0.97); }
-        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-        .avatar { width: 46px; height: 46px; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid rgba(255,255,255,0.2); }
-        .price { font-size: 24px; font-weight: 900; background: linear-gradient(90deg, #fff, #ddd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .page-enter { animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-        /* ==================== МОДАЛЬНЫЕ ОКНА ==================== */
-        .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s ease; }
-        .modal-content { background: #1c1c1e; width: 100%; border-radius: 24px; padding: 24px; text-align: center; border: 1px solid var(--glass-border); }
     </style>
 </head>
 <body>
     <div id="app" class="container"></div>
+
+    <!-- Общий элемент шторки фильтров -->
+    <div class="sheet-overlay" id="sheetOverlay" onclick="toggleFilters(false)"></div>
+    <div class="bottom-sheet" id="filtersSheet">
+        <div class="drag-pill"></div>
+        <h3 style="font-size:20px; font-weight:800; margin-bottom:20px;">Умные фильтры</h3>
+        
+        <label style="color:var(--text-muted); font-size:13px; margin-bottom:8px; display:block;">Сортировка</label>
+        <select class="input-dark">
+            <option>По умолчанию (Сначала новые)</option>
+            <option>Сначала дешевые</option>
+            <option>Сначала дорогие</option>
+            <option>Сначала высокий рейтинг продавца</option>
+        </select>
+
+        <label style="color:var(--text-muted); font-size:13px; margin-bottom:8px; display:block; margin-top:10px;">Цена</label>
+        <div style="display:flex; gap:10px;">
+            <input type="number" class="input-dark" placeholder="От">
+            <input type="number" class="input-dark" placeholder="До">
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0;">
+            <span style="font-weight:700;">Только с торгом</span>
+            <input type="checkbox" style="width:20px;height:20px;accent-color:var(--accent-pink);">
+        </div>
+
+        <div onclick="toggleFilters(false)" style="background:var(--accent-pink); padding:16px; border-radius:14px; text-align:center; font-weight:800; cursor:pointer;">Применить</div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="bottom-nav">
+        <div class="nav-item active" id="nav-servers" onclick="navigate('servers')">
+            <div class="nav-icon">🌐</div>
+            <span>Главная</span>
+        </div>
+        <div class="nav-item" id="nav-chats" onclick="navigate('chats')">
+            <div class="nav-icon">💬</div>
+            <span>Чаты</span>
+            <div class="nav-badge">2</div>
+        </div>
+        <div class="nav-item" id="nav-profile" onclick="navigate('profile')">
+            <div class="nav-icon">👤</div>
+            <span>Профиль</span>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -231,222 +215,138 @@
         tg.setHeaderColor('#141414');
         tg.setBackgroundColor('#141414');
 
-        // Моковые данные серверов и лотов
-        const SERVERS = [
-            {id:1,name:"RED",color:"#FF3B30"},{id:2,name:"GREEN",color:"#34C759"},{id:3,name:"BLUE",color:"#0A84FF"},
-            {id:4,name:"YELLOW",color:"#FFCC00"},{id:5,name:"ORANGE",color:"#FF9500"},{id:6,name:"PURPLE",color:"#AF52DE"},
-            {id:8,name:"PINK",color:"#FF2D55"},{id:10,name:"BLACK",color:"#8E8E93"},{id:23,name:"MOSCOW",color:"#FF2B3B"},
-            {id:24,name:"SPB",color:"#11A6FA"}
-        ];
-
-        const SAMPLE_ITEMS = [
-            {id:1, name:"BMW M5 F90", desc:"Полный тюнинг ФТ, прошивка спорт. Не бит не крашен.", price:4500000, seller:"@prodrift", deals: 112, avatar:"🚗", rating:4.9, bargain: true},
-            {id:2, name:"VIP Скин (Анонимно)", desc:"Продам редкий скин, сделка только через гаранта.", price:1250000, seller:"Анонимный продавец", deals: 45, avatar:"👤", rating:5.0, bargain: false},
-            {id:3, name:"Дом в Рублевке", desc:"3 этажа + гараж на 4 места. Оплачен на месяц.", price:15000000, seller:"@realestate", deals: 18, avatar:"🏠", rating:4.7, bargain: true},
-            {id:4, name:"Сим-карта 777777", desc:"Блатная симка, торг минимальный.", price:250000, seller:"@sim_boss", deals: 2, avatar:"📱", rating:4.0, bargain: true}
-        ];
-
-        // Глобальный стейт
-        let state = {
+        const state = {
             view: 'servers',
-            currentServer: null,
-            favorites: [3, 23],
-            searchQuery: '',
-            currentItem: null,
-            // Данные текущего пользователя для дашборда
-            currentUser: {
-                name: "Brutal_Player",
-                deals: 24, // Дилер
-                avatar: "😎",
-                perks: [
-                    {icon: "🥷", text: "Анонимность", active: true},
-                    {icon: "🚀", text: "Топ в поиске", active: false},
-                    {icon: "🛡", text: "Доверенный", active: true},
-                    {icon: "💸", text: "Без комиссии", active: false}
-                ]
-            }
+            currentServer: { id: 1, name: "RED", color: "#FF3B30" },
+            marketType: 'wts', // wts (продажа) или wtb (ищут)
+            activeCategory: 'Все',
+            searchQuery: ''
         };
 
-        // Логика рангов
-        function getRank(deals) {
-            if(deals <= 5) return {name: "Новичок", class: "badge-dealer", color: "#8E8E93"};
-            if(deals <= 20) return {name: "Дилер", class: "badge-dealer", color: "#34C759"};
-            if(deals <= 50) return {name: "Профессионал", class: "badge-pro", color: "#0A84FF"};
-            if(deals <= 100) return {name: "Крестный Отец", class: "badge-pro", color: "#AF52DE"};
-            return {name: "Легенда", class: "badge-legend", color: "#FFD700"};
+        const CATEGORIES = ['Все', '🚗 Авто', '🏠 Недвижимость', '💼 Бизнесы', '👕 Скины', '💍 Аксессуары', '📦 Разное'];
+
+        // --- НАВИГАЦИЯ ---
+        function navigate(view) {
+            state.view = view;
+            
+            // Обновляем активный таб внизу
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(['servers', 'market'].includes(view)) document.getElementById('nav-servers').classList.add('active');
+            if(['chats', 'chat_room'].includes(view)) document.getElementById('nav-chats').classList.add('active');
+            if(view === 'profile') document.getElementById('nav-profile').classList.add('active');
+
+            render();
+            window.scrollTo(0,0);
         }
 
-        // Логика умного торга
-        function getBargainButtons(price) {
-            if (price <= 300000) return [{t:'-10k', v:10000}, {t:'-20k', v:20000}, {t:'-50k', v:50000}, {t:'Своя сумма', v:0}];
-            if (price <= 5000000) return [{t:'-50k', v:50000}, {t:'-100k', v:100000}, {t:'-200k', v:200000}, {t:'-500k', v:500000}];
-            return [{t:'-500k', v:500000}, {t:'-1 млн', v:1000000}, {t:'-2 млн', v:2000000}, {t:'Своя сумма', v:0}];
+        function toggleFilters(show) {
+            const sheet = document.getElementById('filtersSheet');
+            const overlay = document.getElementById('sheetOverlay');
+            if (show) {
+                sheet.classList.add('open'); overlay.classList.add('open');
+            } else {
+                sheet.classList.remove('open'); overlay.classList.remove('open');
+            }
         }
 
-        // --- ЭКРАН 1: ДАШБОРД + СЕРВЕРЫ ---
+        function selectCategory(cat) {
+            state.activeCategory = cat;
+            render();
+        }
+
+        function toggleMarketType(type) {
+            state.marketType = type;
+            render();
+        }
+
+        // --- ЭКРАН 1: ГЛАВНАЯ (СЕРВЕРЫ) ---
         function renderServers() {
-            const filtered = SERVERS.filter(s => s.name.toLowerCase().includes(state.searchQuery.toLowerCase()));
-            const userRank = getRank(state.currentUser.deals);
+            const SERVERS = [
+                {id:1,name:"RED",color:"#FF3B30", on: 850, ads: 120}, {id:2,name:"GREEN",color:"#34C759", on: 920, ads: 85},
+                {id:3,name:"BLUE",color:"#0A84FF", on: 780, ads: 45}, {id:23,name:"MOSCOW",color:"#FF2B3B", on: 999, ads: 210}
+            ];
             
             return `
                 <div class="page-enter">
-                    <!-- ШАПКА ПРОФИЛЯ -->
-                    <div class="dashboard-header" onclick="window.navigate('profile')">
-                        <div class="dash-user">
-                            <div class="dash-avatar">${state.currentUser.avatar}</div>
-                            <div>
-                                <div class="dash-name">${state.currentUser.name}</div>
-                                <span class="badge ${userRank.class}">${userRank.name}</span>
-                            </div>
-                        </div>
-                        <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid rgba(255,255,255,0.1);">
-                            🔔
+                    <div class="dash-user" onclick="navigate('profile')">
+                        <div class="dash-avatar">😎</div>
+                        <div>
+                            <div style="font-size:18px; font-weight:800;">Brutal_Player</div>
+                            <span class="badge badge-pro">Профессионал</span>
                         </div>
                     </div>
 
-                    <!-- РЕКЛАМНЫЙ БАННЕР -->
-                    <div class="promo-banner" onclick="tg.showAlert('Тут будет покупка подписки или переход в другой сервис')">
-                        <div class="promo-tag">Реклама</div>
-                        <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;">🔥 Premium VIP со скидкой</h3>
-                        <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;line-height:1.4;">Выделяй свои объявления цветом, продавай анонимно и будь всегда в топе поиска!</p>
-                        <div style="display:inline-block;padding:10px 18px;background:var(--accent-pink);border-radius:12px;font-size:13px;font-weight:800;">Оформить за 99₽</div>
+                    <div style="font-size:22px; font-weight:800; margin-bottom:16px;">Выбери сервер</div>
+                    <div class="search-row">
+                        <input type="text" class="input-dark" placeholder="🔎 Найти сервер...">
                     </div>
 
-                    <!-- БЛОК ПЕРКОВ (УЛУЧШЕНИЙ) -->
-                    <div style="margin-bottom: 28px;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                            <div style="font-size:18px;font-weight:800;">⚡ Твои улучшения</div>
-                            <div style="font-size:12px;color:var(--accent-pink);font-weight:700;" onclick="window.navigate('profile')">Магазин</div>
-                        </div>
-                        <div class="perks-scroll">
-                            ${state.currentUser.perks.map(p => `
-                                <div class="perk-chip ${p.active ? 'active' : 'locked'}" onclick="tg.showAlert('${p.active ? 'Этот навык активен!' : 'Нужно прокачать ранг или купить VIP'}')">
-                                    <span>${p.icon}</span> ${p.text}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <div style="font-size:22px;font-weight:800;margin-bottom:16px;">Выбор сервера</div>
-                    <input type="text" class="input-dark" style="border-radius:9999px; padding-left:24px;" 
-                           placeholder="🔎 Найти свой сервер..." value="${state.searchQuery}" oninput="window.updateSearch(this.value)">
-
-                    <div class="servers-grid" style="margin-top: 16px;">
-                        ${filtered.map((s, i) => {
-                            const mockOnline = 800 + (s.id * 13 % 200);
-                            const mockAds = 40 + (s.id * 7 % 100);
-                            const isFav = state.favorites.includes(s.id);
-                            
-                            return `
-                            <div class="server-plate" style="--srv-color:${s.color}; animation-delay:${i*0.02}s" 
-                                 onclick="window.selectServer(${s.id}, '${s.color}')">
-                                <div class="server-header">
-                                    <span class="server-plate-name">${isFav ? '⭐ ' : ''}${s.name}</span>
-                                    <div class="server-dot"></div>
-                                </div>
-                                <div class="server-stats">
-                                    <span>👥 ${mockOnline}</span>
-                                    <span>📦 ${mockAds}</span>
+                    <div class="servers-grid">
+                        ${SERVERS.map(s => `
+                            <div class="server-plate" style="--srv-color:${s.color};" onclick="state.currentServer = ${JSON.stringify(s)}; navigate('market')">
+                                <div class="server-dot"></div>
+                                <span class="server-plate-name">${s.name}</span>
+                                <div class="server-tags">
+                                    <span class="g-tag">👥 ${s.on}</span>
+                                    <span class="g-tag">📦 ${s.ads} лотов</span>
                                 </div>
                             </div>
-                        `}).join('')}
+                        `).join('')}
                     </div>
                 </div>
             `;
         }
 
-        // --- ЭКРАН 2: РЫНОК СЕРВЕРА ---
+        // --- ЭКРАН 2: РЫНОК (С ФИЛЬТРАМИ И КАТЕГОРИЯМИ) ---
         function renderMarket() {
-            const filteredItems = SAMPLE_ITEMS.filter(item => 
-                item.name.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
-                item.seller.toLowerCase().includes(state.searchQuery.toLowerCase())
-            );
-
+            const isWTS = state.marketType === 'wts';
+            
             return `
                 <div class="page-enter">
-                    <div class="header">
-                        <div onclick="window.navigate('servers')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">←</div>
-                        <div style="font-size:24px;font-weight:800;color:var(--accent-pink)">${state.currentServer.name} MARKET</div>
-                        <div style="width:44px;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <div onclick="navigate('servers')" style="background:var(--glass-base); padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer;">← Назад</div>
+                        <div style="font-size:20px; font-weight:800; color:var(--accent-pink);">${state.currentServer.name}</div>
+                        <div style="width:70px;"></div>
                     </div>
 
-                    <input type="text" class="input-dark" style="border-radius:9999px; padding-left:24px; margin-bottom: 24px;" 
-                           placeholder="🔎 Поиск лота или @nick..." value="${state.searchQuery}" oninput="window.updateSearch(this.value)">
-
-                    <div class="fab" id="fab" onclick="window.navigate('create')">+</div>
-
-                    ${filteredItems.map(item => {
-                        const rank = getRank(item.deals);
-                        return `
-                        <div class="glass-relief market-card" onclick="window.openItem(${item.id})">
-                            <div class="card-header">
-                                <div class="avatar">${item.avatar}</div>
-                                <div>
-                                    <div style="font-weight:700; display:flex; gap:6px; align-items:center;">
-                                        ${item.seller} <span style="font-size:12px;color:#34C759;">⭐ ${item.rating}</span>
-                                    </div>
-                                    <div style="margin-top:4px;"><span class="badge ${rank.class}">${rank.name}</span></div>
-                                </div>
-                            </div>
-                            <div style="font-size:20px;font-weight:800;margin-bottom:6px;">${item.name}</div>
-                            <div style="color:var(--text-muted);font-size:14px;margin-bottom:16px;">${item.desc.substring(0,40)}...</div>
-                            <div style="display:flex;justify-content:space-between;align-items:center;">
-                                <div class="price">${item.price.toLocaleString('ru-RU')} ₽</div>
-                                <div style="background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:9999px;font-weight:700;font-size:14px;">Подробнее</div>
-                            </div>
-                        </div>
-                    `}).join('')}
-                </div>
-            `;
-        }
-
-        // --- ЭКРАН 3: КАРТОЧКА ЛОТА ---
-        function renderItemView() {
-            const item = state.currentItem;
-            const rank = getRank(item.deals);
-            const bargainBtns = item.bargain ? getBargainButtons(item.price) : [];
-
-            return `
-                <div class="page-enter">
-                    <div class="header">
-                        <div onclick="window.navigate('market')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">←</div>
-                        <div style="font-size:20px;font-weight:800;">Объявление</div>
-                        <div style="width:44px;"></div>
+                    <!-- Свитчер Продажа / Покупка -->
+                    <div class="segment-control">
+                        <div class="segment-btn ${isWTS ? 'active' : ''}" onclick="toggleMarketType('wts')">🛒 Продажа</div>
+                        <div class="segment-btn ${!isWTS ? 'active' : ''}" onclick="toggleMarketType('wtb')">📢 Ищут купить</div>
                     </div>
 
-                    <div class="glass-relief no-shine" style="padding:24px;">
-                        <div style="display:flex; gap:16px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:16px; margin-bottom:16px;">
-                            <div class="avatar" style="width:60px;height:60px;font-size:30px;">${item.avatar}</div>
-                            <div>
-                                <div style="font-size:18px;font-weight:800;">${item.seller}</div>
-                                <div style="font-size:14px;color:var(--text-muted);margin:4px 0;">Сделок: ${item.deals} • ⭐ ${item.rating}</div>
-                                <span class="badge ${rank.class}">${rank.name}</span>
-                            </div>
-                        </div>
+                    <!-- Поиск и Фильтр -->
+                    <div class="search-row">
+                        <input type="text" class="input-dark" placeholder="${isWTS ? '🔎 Поиск лота...' : '🔎 Что ищут игроки...'}">
+                        <div class="filter-btn" onclick="toggleFilters(true)">🎛</div>
+                    </div>
 
-                        <h2 style="font-size:24px;font-weight:800;margin-bottom:8px;">${item.name}</h2>
-                        <p style="color:var(--text-muted);font-size:15px;line-height:1.5;margin-bottom:24px;">${item.desc}</p>
-                        
-                        <div style="font-size:14px;color:var(--text-muted);margin-bottom:4px;">Цена:</div>
-                        <div class="price" style="font-size:32px;margin-bottom:24px;">${item.price.toLocaleString('ru-RU')} ₽</div>
+                    <!-- Категории -->
+                    <div class="categories-scroll">
+                        ${CATEGORIES.map(c => `
+                            <div class="chip ${state.activeCategory === c ? 'active-cat' : ''}" onclick="selectCategory('${c}')">${c}</div>
+                        `).join('')}
+                    </div>
 
-                        <div onclick="window.startDeal()" style="background:var(--accent-pink);color:white;padding:16px;text-align:center;border-radius:16px;font-weight:800;font-size:16px;margin-bottom:16px;cursor:pointer;">
-                            🤝 Купить через Гаранта
-                        </div>
-
-                        ${item.bargain ? `
-                            <div style="background:rgba(0,0,0,0.2); border-radius:16px; padding:16px;">
-                                <div style="font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between;">
-                                    <span>Торг уместен</span>
-                                    <span style="color:var(--text-muted);font-size:12px;font-weight:normal;">КД: 30 мин</span>
+                    <div style="margin-top:20px;">
+                        ${isWTS ? `
+                            <div class="glass-relief market-card" onclick="tg.showAlert('Тут открывается карточка лота')">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                                    <span style="font-weight:700;">@prodrift <span style="color:#34C759;font-size:12px;">⭐ 4.9</span></span>
+                                    <span class="badge badge-pro">Профи</span>
                                 </div>
-                                <div class="bid-grid">
-                                    ${bargainBtns.map(b => `<div class="bid-btn" onclick="window.sendBid('${b.t}')">${b.t}</div>`).join('')}
-                                </div>
+                                <div style="font-size:18px; font-weight:800; margin-bottom:8px;">BMW M5 F90 (ФТ)</div>
+                                <div style="font-size:22px; font-weight:900; color:var(--accent-pink);">4 500 000 ₽</div>
                             </div>
                         ` : `
-                            <div style="text-align:center; color:var(--text-muted); font-size:14px; padding:12px; background:rgba(0,0,0,0.2); border-radius:16px;">
-                                🔒 Продавец отключил торг
+                            <div class="glass-relief market-card" style="border-left: 4px solid #0A84FF;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                                    <span style="font-weight:700; color:#0A84FF;">Поиск товара</span>
+                                    <span style="color:var(--text-muted); font-size:12px;">2 мин назад</span>
+                                </div>
+                                <div style="font-size:16px; font-weight:800; margin-bottom:8px;">Куплю Транспортную Компанию (ТК)</div>
+                                <div style="font-size:14px; color:var(--text-muted); margin-bottom:12px;">Бюджет до 50кк, пишите только с реальными предложениями.</div>
+                                <div style="background:#0A84FF; padding:12px; border-radius:12px; text-align:center; font-weight:700;">Предложить свой товар</div>
                             </div>
                         `}
                     </div>
@@ -454,201 +354,89 @@
             `;
         }
 
-        // --- ЭКРАН 4: СОЗДАНИЕ ОБЪЯВЛЕНИЯ ---
-        function renderCreateForm() {
+        // --- ЭКРАН 3: СПИСОК ЧАТОВ ---
+        function renderChats() {
             return `
                 <div class="page-enter">
-                    <div class="header">
-                        <div onclick="window.navigate('market')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">←</div>
-                        <div style="font-size:22px;font-weight:800;">Новый лот</div>
-                        <div style="width:44px;"></div>
-                    </div>
-
-                    <div class="glass-relief no-shine" style="padding:20px;">
-                        <label style="display:block;margin-bottom:8px;font-size:14px;font-weight:700;color:var(--text-muted);">Название предмета</label>
-                        <input type="text" class="input-dark" placeholder="Например: BMW M5 F90">
-
-                        <label style="display:block;margin-bottom:8px;font-size:14px;font-weight:700;color:var(--text-muted);">Цена (вирты)</label>
-                        <input type="number" class="input-dark" placeholder="5000000">
-
-                        <label style="display:block;margin-bottom:8px;font-size:14px;font-weight:700;color:var(--text-muted);">Способ связи</label>
-                        <select class="input-dark">
-                            <option>Публично (Мой @username)</option>
-                            <option>Анонимно (Только чат-бот гарант)</option>
-                        </select>
-
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0;padding:16px;background:rgba(0,0,0,0.2);border-radius:16px;">
-                            <span style="font-weight:700;">Разрешить торг</span>
-                            <input type="checkbox" checked style="width:24px;height:24px;accent-color:var(--accent-pink);">
-                        </div>
-
-                        <div onclick="window.publishAd()" style="background:var(--accent-pink);color:white;padding:18px;text-align:center;border-radius:16px;font-weight:800;font-size:16px;margin-top:10px;cursor:pointer;">
-                            Опубликовать
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // --- ЭКРАН 5: ПРОФИЛЬ ---
-        function renderProfile() {
-            const myRank = getRank(state.currentUser.deals);
-
-            return `
-                <div class="page-enter">
-                    <div class="header">
-                        <div onclick="window.navigate('servers')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">←</div>
-                        <div style="font-size:24px;font-weight:800;">Мой профиль</div>
-                        <div style="width:44px;"></div>
-                    </div>
-
-                    <div class="glass-relief no-shine" style="padding:32px 20px;text-align:center;margin-bottom:20px;">
-                        <div style="font-size:70px;margin-bottom:16px;line-height:1;">${state.currentUser.avatar}</div>
-                        <h2 style="font-size:28px;font-weight:800;margin-bottom:8px;">${state.currentUser.name}</h2>
-                        <div style="margin-bottom:16px;"><span class="badge ${myRank.class}" style="font-size:14px;padding:6px 14px;">${myRank.name}</span></div>
-                        
-                        <div style="display:flex;justify-content:space-around;background:rgba(0,0,0,0.2);padding:16px;border-radius:16px;">
-                            <div>
-                                <div style="font-size:20px;font-weight:800;">${state.currentUser.deals}</div>
-                                <div style="font-size:12px;color:var(--text-muted);">Сделок</div>
-                            </div>
-                            <div>
-                                <div style="font-size:20px;font-weight:800;color:#34C759;">4.9</div>
-                                <div style="font-size:12px;color:var(--text-muted);">Рейтинг</div>
-                            </div>
-                            <div>
-                                <div style="font-size:20px;font-weight:800;">3</div>
-                                <div style="font-size:12px;color:var(--text-muted);">В продаже</div>
-                            </div>
-                        </div>
-
-                        <!-- Прогресс бар ранга -->
-                        <div style="margin-top:20px;text-align:left;">
-                            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px;">
-                                <span>Прогресс до "Профессионал"</span>
-                                <span>${state.currentUser.deals} / 50</span>
-                            </div>
-                            <div style="width:100%;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
-                                <div style="width:${(state.currentUser.deals / 50) * 100}%;height:100%;background:var(--accent-pink);border-radius:4px;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3 style="font-size:18px;font-weight:800;margin-bottom:12px;padding-left:8px;">Последние отзывы</h3>
-                    <div class="glass-relief no-shine" style="padding:16px;">
-                        <div style="border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:12px;">
-                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                                <span style="font-weight:700;">@buyer_one</span>
-                                <span style="color:#34C759;">⭐⭐⭐⭐⭐</span>
-                            </div>
-                            <div style="font-size:14px;color:var(--text-muted);">Все быстро и четко, перевел первым.</div>
-                        </div>
-                        <div>
-                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                                <span style="font-weight:700;">Аноним</span>
-                                <span style="color:#34C759;">⭐⭐⭐⭐</span>
-                            </div>
-                            <div style="font-size:14px;color:var(--text-muted);">Норм продавец, сделка через бота прошла ок.</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // --- НАВИГАЦИЯ И ДЕЙСТВИЯ ---
-        window.navigate = (view) => {
-            state.searchQuery = ''; 
-            state.view = view;
-            render();
-            window.scrollTo(0,0);
-        };
-
-        window.selectServer = (id, color) => {
-            state.currentServer = SERVERS.find(s => s.id === id);
-            document.documentElement.style.setProperty('--accent-pink', color);
-            navigate('market');
-        };
-
-        window.updateSearch = (val) => {
-            state.searchQuery = val;
-            render();
-        };
-
-        window.openItem = (id) => {
-            state.currentItem = SAMPLE_ITEMS.find(i => i.id === id);
-            navigate('item');
-        };
-
-        window.startDeal = () => {
-            tg.showConfirm("Бот создаст приватный чат для сделки между тобой и продавцом. Продолжить?", (confirmed) => {
-                if (confirmed) tg.showAlert("Чат успешно создан! Проверьте личные сообщения с ботом.");
-            });
-        };
-
-        window.sendBid = (amount) => {
-            tg.showAlert(`Предложение «${amount}» отправлено продавцу.\n\nЗащита от спама: следующее предложение можно отправить через 30 минут.`);
-        };
-
-        window.publishAd = () => {
-            const app = document.getElementById('app');
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div style="font-size:50px;margin-bottom:16px;">✅</div>
-                    <h3 style="font-size:22px;font-weight:800;margin-bottom:8px;">Опубликовано!</h3>
-                    <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">Твой лот теперь в ленте сервера. Поделись им, чтобы продать быстрее!</p>
+                    <h2 style="font-size:28px; font-weight:800; margin-bottom:20px;">Чаты (Сделки)</h2>
                     
-                    <div style="background:#fff;padding:16px;border-radius:16px;display:inline-block;margin-bottom:20px;">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=t.me/black_russia_market_bot?start=ad_12345" style="border-radius:8px;">
-                    </div>
+                    <div class="glass-relief">
+                        <div class="chat-item" onclick="navigate('chat_room')">
+                            <div class="chat-avatar">👤<div class="online-dot"></div></div>
+                            <div style="flex:1;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                    <span style="font-weight:800; font-size:16px;">@buyer_2024</span>
+                                    <span style="font-size:12px; color:var(--text-muted);">14:30</span>
+                                </div>
+                                <div style="font-size:14px; color:var(--text-muted);">Лот: BMW M5 F90</div>
+                                <div style="font-size:14px; color:white; margin-top:4px;">Ок, жду тебя на б/у рынке.</div>
+                            </div>
+                        </div>
 
-                    <div style="display:flex;gap:10px;">
-                        <div onclick="this.closest('.modal-overlay').remove(); window.navigate('market')" style="flex:1;background:rgba(255,255,255,0.1);padding:14px;border-radius:12px;font-weight:700;cursor:pointer;">Закрыть</div>
-                        <div onclick="tg.showAlert('Ссылка скопирована!'); this.closest('.modal-overlay').remove(); window.navigate('market')" style="flex:2;background:var(--accent-pink);color:white;padding:14px;border-radius:12px;font-weight:700;cursor:pointer;">Копировать ссылку</div>
+                        <div class="chat-item" onclick="navigate('chat_room')">
+                            <div class="chat-avatar" style="background:var(--accent-pink);">🤖</div>
+                            <div style="flex:1;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                    <span style="font-weight:800; font-size:16px;">Анонимная сделка #882</span>
+                                    <span style="font-size:12px; color:var(--text-muted);">Вчера</span>
+                                </div>
+                                <div style="font-size:14px; color:var(--text-muted);">Лот: VIP Скин</div>
+                                <div style="font-size:14px; color:#34C759; margin-top:4px;">Сделка успешно завершена!</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
-            app.appendChild(modal);
-        };
+        }
 
-        // --- РЕНДЕР И УПРАВЛЕНИЕ СКРОЛЛОМ ---
+        // --- ЭКРАН 4: КОМНАТА ЧАТА (СДЕЛОЧНАЯ) ---
+        function renderChatRoom() {
+            return `
+                <div class="page-enter" style="display:flex; flex-direction:column; min-height:80vh;">
+                    <div style="display:flex; align-items:center; gap:12px; padding-bottom:16px; border-bottom:1px solid var(--glass-border); margin-bottom:20px;">
+                        <div onclick="navigate('chats')" style="background:var(--glass-base); padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer;">←</div>
+                        <div class="chat-avatar" style="width:40px; height:40px; font-size:16px;">👤</div>
+                        <div>
+                            <div style="font-weight:800;">@buyer_2024</div>
+                            <div style="font-size:12px; color:#34C759;">В сети</div>
+                        </div>
+                    </div>
+
+                    <!-- ПАНЕЛЬ СДЕЛКИ -->
+                    <div class="deal-panel">
+                        <div style="font-weight:800; margin-bottom:6px;">Сделка: BMW M5 F90</div>
+                        <div style="font-size:13px; margin-bottom:16px; color:rgba(52,199,89,0.8);">Для безопасного обмена оба должны подтвердить успешную передачу.</div>
+                        <div style="background:#34C759; color:black; padding:12px; border-radius:12px; font-weight:800; cursor:pointer;" onclick="this.innerHTML='Ожидаем второго (1/2)'; this.style.opacity='0.5';">
+                            ✅ Подтвердить сделку (0/2)
+                        </div>
+                    </div>
+
+                    <!-- СООБЩЕНИЯ -->
+                    <div style="display:flex; flex-direction:column; flex:1;">
+                        <div class="chat-bubble left">Привет! Машина еще в продаже? Готов забрать за 4.2кк</div>
+                        <div class="chat-bubble right">Привет, да. Подъезжай на низкий автосалон.</div>
+                        <div class="chat-bubble left">Ок, жду тебя на б/у рынке.</div>
+                    </div>
+
+                    <!-- ИНПУТ ВВОДА -->
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <input type="text" class="input-dark" style="margin:0; border-radius:20px;" placeholder="Написать сообщение...">
+                        <div style="width:50px; height:50px; background:var(--accent-pink); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer;">➤</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- РЕНДЕР ---
         function render() {
             let html = '';
             if (state.view === 'servers') html = renderServers();
             else if (state.view === 'market') html = renderMarket();
-            else if (state.view === 'item') html = renderItemView();
-            else if (state.view === 'profile') html = renderProfile();
-            else if (state.view === 'create') html = renderCreateForm();
-            else html = renderServers();
-
+            else if (state.view === 'chats') html = renderChats();
+            else if (state.view === 'chat_room') html = renderChatRoom();
+            else if (state.view === 'profile') html = `<div class="page-enter"><h2 style="font-size:28px;font-weight:800;">Профиль</h2><p style="color:gray;margin-top:10px;">В разработке...</p></div>`;
+            
             document.getElementById('app').innerHTML = html;
-
-            if (state.view === 'market') {
-                const fab = document.getElementById('fab');
-                let lastScroll = 0;
-                let hideTimeout = null;
-
-                window.onscroll = () => {
-                    const current = window.scrollY;
-                    if (current > lastScroll && current > 50) {
-                        if(fab) fab.classList.add('hidden');
-                    } else {
-                        if(fab) {
-                            fab.classList.remove('hidden');
-                            fab.style.opacity = '0.9';
-                        }
-                    }
-                    lastScroll = current;
-
-                    if (hideTimeout) clearTimeout(hideTimeout);
-                    hideTimeout = setTimeout(() => {
-                        if (fab && !fab.classList.contains('hidden')) fab.style.opacity = '0.6';
-                    }, 2500);
-                };
-            } else {
-                window.onscroll = null;
-            }
         }
 
         render();
