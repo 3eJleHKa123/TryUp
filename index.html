@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TradeMarket — Dark Relief iOS 26</title>
+    <title>TradeMarket — Dark Premium Plates iOS 26</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            /* Динамический цвет (меняется через JS при выборе сервера) */
+            /* Динамический цвет (меняется при выборе сервера) */
             --active-color: #0A84FF; 
             
             --bg-deep: #050507;
             --text-main: #ffffff;
             --text-muted: rgba(255, 255, 255, 0.45);
             
-            /* Параметры рельефного стекла */
-            --glass-base: rgba(18, 18, 22, 0.45);
-            --glass-blur: blur(50px) saturate(200%);
+            /* Рельефное стекло */
+            --glass-base: rgba(18, 18, 22, 0.5);
+            --glass-blur: blur(40px) saturate(200%);
             
-            /* Сложные тени для объема (Рельеф) */
             --relief-shadow: 
-                20px 20px 40px rgba(0, 0, 0, 0.8), 
-                -10px -10px 20px rgba(255, 255, 255, 0.03),
-                inset 1px 1px 2px rgba(255, 255, 255, 0.15),
-                inset -1px -1px 3px rgba(0, 0, 0, 0.6);
+                15px 15px 35px rgba(0, 0, 0, 0.8), 
+                -5px -5px 15px rgba(255, 255, 255, 0.02),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.1),
+                inset -1px -1px 4px rgba(0, 0, 0, 0.7);
                 
             --relief-shadow-active: 
-                inset 3px 3px 8px rgba(0, 0, 0, 0.8),
+                inset 4px 4px 10px rgba(0, 0, 0, 0.9),
                 inset -2px -2px 5px rgba(255, 255, 255, 0.05);
 
-            --radius-xl: 32px;
             --radius-lg: 24px;
-            --radius-md: 18px;
-            --radius-sm: 12px;
+            --radius-md: 16px;
             
             --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
             --smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -45,14 +42,12 @@
         }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
+            background-color: var(--bg-deep); color: var(--text-main);
+            min-height: 100vh; overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 1. ФОН: Глубокие переливы + Зерно (Реалистичность стекла) */
+        /* Фоновые эффекты: Шум + Цветные Ауры */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999;
             pointer-events: none; opacity: 0.04; mix-blend-mode: overlay;
@@ -72,336 +67,228 @@
             position: relative; z-index: 1;
         }
 
-        /* 2. БАЗОВЫЙ КЛАСС РЕЛЬЕФНОГО СТЕКЛА */
+        /* БАЗОВЫЙ КЛАСС СТЕКЛА */
         .glass-relief {
             background: var(--glass-base);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-radius: var(--radius-lg);
             box-shadow: var(--relief-shadow);
             border: 1px solid rgba(255, 255, 255, 0.03);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.4s var(--spring), box-shadow 0.4s var(--smooth);
+            position: relative; overflow: hidden;
         }
-
         .glass-relief::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             opacity: 0.5;
         }
 
-        /* 3. ОБЪЕМНЫЕ ДИНАМИЧЕСКИЕ КНОПКИ (Уровень iOS 26) */
-        .btn-3d {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 100%; padding: 18px 24px;
-            font-size: 17px; font-weight: 700; letter-spacing: 0.5px;
-            border-radius: var(--radius-md); border: none; cursor: pointer;
-            text-transform: uppercase;
-            color: #fff;
-            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.4));
-            box-shadow: 
-                0 10px 25px color-mix(in srgb, var(--active-color) 40%, transparent),
-                inset 1px 1px 2px rgba(255,255,255,0.3),
-                inset -1px -1px 4px rgba(0,0,0,0.5);
-            border: 1px solid color-mix(in srgb, var(--active-color) 50%, transparent);
-            position: relative; overflow: hidden;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        /* ---------------------------------------------------
+           ИСПРАВЛЕНИЕ 2: ПРЯМОУГОЛЬНЫЕ ПЛАШКИ СЕРВЕРОВ
+           --------------------------------------------------- */
+        .servers-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* 2 колонки для широких плашек */
+            gap: 14px; 
+        }
+        
+        .server-plate {
+            position: relative;
+            background: rgba(20, 20, 25, 0.5);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-top: 1px solid rgba(255, 255, 255, 0.12); /* Яркая фаска сверху */
+            border-bottom: 1px solid color-mix(in srgb, var(--srv-color) 30%, transparent); /* Цветная снизу */
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 -2px 15px color-mix(in srgb, var(--srv-color) 10%, transparent);
+            cursor: pointer; overflow: hidden;
+            transition: all 0.3s var(--spring);
         }
 
+        /* Цветной градиентный блик внутри плашки */
+        .server-plate::after {
+            content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 100%;
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--srv-color) 15%, transparent));
+            pointer-events: none;
+        }
+
+        .server-plate-name {
+            font-size: 15px; font-weight: 800; color: #fff;
+            letter-spacing: 0.5px; z-index: 2;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        /* Неоновый индикатор */
+        .server-dot {
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--srv-color);
+            box-shadow: 0 0 12px var(--srv-color), 0 0 24px var(--srv-color), inset 1px 1px 2px rgba(255,255,255,0.8);
+            z-index: 2;
+        }
+
+        .server-plate:active {
+            transform: scale(0.93);
+            box-shadow: inset 2px 2px 10px rgba(0,0,0,0.8), inset 0 -2px 15px color-mix(in srgb, var(--srv-color) 30%, transparent);
+            border-top-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ---------------------------------------------------
+           ИСПРАВЛЕНИЕ 1: ТАБЫ БЕЗ ОБРЕЗАНИЯ ТЕНЕЙ
+           --------------------------------------------------- */
+        .tabs-scroll-wrapper {
+            margin: 0 -16px; /* Растягиваем до краев экрана */
+            padding: 10px 16px 40px 16px; /* ВАЖНО: 40px снизу дают место для отрисовки тени */
+            margin-bottom: -24px; /* Компенсируем этот отступ для нижних элементов */
+            overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+        }
+        .tabs-scroll-wrapper::-webkit-scrollbar { display: none; }
+        
+        .segmented-tabs { display: inline-flex; gap: 12px; width: max-content; }
+        
+        .tab-item {
+            padding: 12px 22px; font-size: 15px; font-weight: 700; border-radius: 20px;
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-muted); cursor: pointer; white-space: nowrap;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); transition: 0.3s var(--spring);
+        }
+        .tab-item.active {
+            background: var(--active-color); color: #fff; border-color: rgba(255,255,255,0.3);
+            /* Теперь эта огромная сочная тень не обрезается */
+            box-shadow: 0 12px 25px color-mix(in srgb, var(--active-color) 60%, transparent),
+                        inset 1px 1px 3px rgba(255,255,255,0.5);
+        }
+
+        /* 3D Кнопки и Иконки */
+        .btn-3d {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 100%; padding: 18px 24px; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;
+            border-radius: var(--radius-md); border: none; cursor: pointer; color: #fff;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.4));
+            box-shadow: 0 10px 25px color-mix(in srgb, var(--active-color) 40%, transparent), inset 1px 1px 2px rgba(255,255,255,0.3), inset -1px -1px 4px rgba(0,0,0,0.5);
+            border: 1px solid color-mix(in srgb, var(--active-color) 50%, transparent);
+            position: relative; overflow: hidden; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
         .btn-3d::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transform: skewX(-20deg); transition: 0.5s;
         }
-
-        .btn-3d:active {
-            transform: scale(0.94) translateY(2px);
-            box-shadow: var(--relief-shadow-active), 0 0 15px color-mix(in srgb, var(--active-color) 60%, transparent);
-        }
-        
+        .btn-3d:active { transform: scale(0.94) translateY(2px); box-shadow: var(--relief-shadow-active), 0 0 15px color-mix(in srgb, var(--active-color) 60%, transparent); }
         .btn-3d:hover::after { left: 150%; }
 
         .btn-icon {
             width: 48px; height: 48px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             background: linear-gradient(145deg, rgba(40,40,45,0.8), rgba(15,15,20,0.8));
-            box-shadow: var(--relief-shadow);
-            border: 1px solid rgba(255,255,255,0.05);
-            color: var(--active-color); cursor: pointer;
-            transition: 0.3s var(--spring);
+            box-shadow: var(--relief-shadow); border: 1px solid rgba(255,255,255,0.05);
+            color: var(--active-color); cursor: pointer; transition: 0.3s var(--spring);
         }
         .btn-icon:active { transform: scale(0.85); box-shadow: var(--relief-shadow-active); }
 
-        /* Всплывающая плавающая кнопка (FAB) */
         .fab-container {
-            position: fixed; bottom: 30px; left: 0; width: 100%;
+            position: fixed; bottom: 30px; left: 16px; right: 16px;
             display: flex; justify-content: center; z-index: 100; pointer-events: none;
         }
         .fab-btn {
-            pointer-events: auto;
-            background: var(--active-color);
-            padding: 16px 32px; border-radius: 30px;
+            pointer-events: auto; width: 100%; max-width: 400px;
+            background: var(--active-color); padding: 18px 32px; border-radius: 30px;
             font-weight: 800; font-size: 16px; color: #fff;
-            display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 15px 35px color-mix(in srgb, var(--active-color) 60%, transparent),
-                        inset 2px 2px 5px rgba(255,255,255,0.4);
-            border: 1px solid rgba(255,255,255,0.2);
-            animation: float-up 0.8s var(--spring) forwards;
-            transition: all 0.3s var(--spring);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 15px 35px color-mix(in srgb, var(--active-color) 60%, transparent), inset 2px 2px 5px rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.2); animation: float-up 0.8s var(--spring) forwards; transition: all 0.3s var(--spring);
         }
         .fab-btn:active { transform: scale(0.9); box-shadow: 0 5px 15px color-mix(in srgb, var(--active-color) 40%, transparent); }
 
-        /* 4. АНИМАЦИИ */
+        /* АНИМАЦИИ */
         .page-enter { animation: zoom-fade-in 0.6s var(--spring) forwards; transform-origin: top center; }
-        @keyframes zoom-fade-in {
-            0% { opacity: 0; transform: scale(0.92) translateY(30px); filter: blur(10px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-        }
-
+        @keyframes zoom-fade-in { 0% { opacity: 0; transform: scale(0.92) translateY(30px); filter: blur(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
         .stagger-item { opacity: 0; animation: slide-in-right 0.5s var(--spring) forwards; }
-        @keyframes slide-in-right {
-            0% { opacity: 0; transform: translateX(30px) scale(0.95); }
-            100% { opacity: 1; transform: translateX(0) scale(1); }
-        }
-        @keyframes float-up {
-            0% { opacity: 0; transform: translateY(50px) scale(0.8); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
+        @keyframes slide-in-right { 0% { opacity: 0; transform: translateX(30px) scale(0.95); } 100% { opacity: 1; transform: translateX(0) scale(1); } }
+        @keyframes float-up { 0% { opacity: 0; transform: translateY(50px) scale(0.8); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
 
-        /* 5. ЭЛЕМЕНТЫ ИНТЕРФЕЙСА */
-        .header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 32px; position: relative;
-        }
-        .header-title {
-            font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
-            background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.5) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-shadow: 0 4px 20px color-mix(in srgb, var(--active-color) 30%, transparent);
-        }
+        /* ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ */
+        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; position: relative; }
+        .header-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.5) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px color-mix(in srgb, var(--active-color) 30%, transparent); }
 
-        /* Сетка серверов */
-        .servers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .server-card {
-            aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: var(--radius-md); padding: 12px; cursor: pointer;
-        }
-        .server-card:active { transform: scale(0.9) rotate3d(1, 0, 0, 10deg); }
-        .server-glow {
-            width: 44px; height: 44px; border-radius: 50%; margin-bottom: 12px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
-            border: 2px solid var(--srv-color);
-            box-shadow: 0 0 20px color-mix(in srgb, var(--srv-color) 60%, transparent),
-                        inset 0 0 15px color-mix(in srgb, var(--srv-color) 80%, transparent);
-            position: relative;
-        }
-        .server-glow::after {
-            content:''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 14px; height: 14px; border-radius: 50%; background: var(--srv-color);
-            box-shadow: 0 0 10px #fff;
-        }
-        .server-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
-
-        /* Табы (Сегменты) */
-        .segmented-tabs {
-            display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 10px;
-            scrollbar-width: none;
-        }
-        .segmented-tabs::-webkit-scrollbar { display: none; }
-        .tab-item {
-            padding: 12px 20px; font-size: 14px; font-weight: 700; border-radius: 20px;
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
-            color: var(--text-muted); cursor: pointer; white-space: nowrap;
-            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); transition: 0.3s var(--spring);
-        }
-        .tab-item.active {
-            background: var(--active-color); color: #fff; border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 8px 20px color-mix(in srgb, var(--active-color) 50%, transparent),
-                        inset 1px 1px 3px rgba(255,255,255,0.4);
-        }
-
-        /* Карточка товара */
         .market-card { padding: 20px; margin-bottom: 20px; cursor: pointer; }
         .market-card:active { transform: scale(0.96); }
         .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .card-badge {
-            background: rgba(0,0,0,0.4); padding: 4px 10px; border-radius: 8px;
-            font-size: 11px; font-weight: 800; text-transform: uppercase;
-            color: var(--active-color); border: 1px solid color-mix(in srgb, var(--active-color) 30%, transparent);
-            box-shadow: 0 0 10px color-mix(in srgb, var(--active-color) 20%, transparent);
-        }
+        .card-badge { background: rgba(0,0,0,0.4); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--active-color); border: 1px solid color-mix(in srgb, var(--active-color) 30%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--active-color) 20%, transparent); }
         .card-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
         .card-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
-        .card-price { 
-            font-size: 26px; font-weight: 900; 
-            background: linear-gradient(135deg, #fff, var(--text-muted));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .buy-mini-btn {
-            background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 14px;
-            border: 1px solid color-mix(in srgb, var(--active-color) 50%, transparent);
-            color: var(--active-color); font-weight: 700;
-        }
+        .card-price { font-size: 26px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .buy-mini-btn { background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--active-color) 50%, transparent); color: var(--active-color); font-weight: 700; }
 
-        /* Формы и Инпуты */
         .input-group { margin-bottom: 20px; position: relative; }
-        .glass-input {
-            width: 100%; padding: 20px; font-size: 16px; color: #fff;
-            background: rgba(0,0,0,0.3); border-radius: var(--radius-md);
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: inset 2px 2px 8px rgba(0,0,0,0.6), inset -1px -1px 2px rgba(255,255,255,0.05);
-            outline: none; transition: 0.3s; -webkit-appearance: none;
-        }
-        .glass-input:focus {
-            border-color: var(--active-color); background: rgba(0,0,0,0.5);
-            box-shadow: inset 2px 2px 8px rgba(0,0,0,0.8), 0 0 15px color-mix(in srgb, var(--active-color) 30%, transparent);
-        }
+        .glass-input { width: 100%; padding: 20px; font-size: 16px; color: #fff; background: rgba(0,0,0,0.3); border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 2px 2px 8px rgba(0,0,0,0.6), inset -1px -1px 2px rgba(255,255,255,0.05); outline: none; transition: 0.3s; -webkit-appearance: none; }
+        .glass-input:focus { border-color: var(--active-color); background: rgba(0,0,0,0.5); box-shadow: inset 2px 2px 8px rgba(0,0,0,0.8), 0 0 15px color-mix(in srgb, var(--active-color) 30%, transparent); }
 
-        /* Свитчер iOS 26 */
-        .toggle-ios {
-            appearance: none; -webkit-appearance: none;
-            width: 56px; height: 32px; background: rgba(0,0,0,0.4);
-            border-radius: 30px; position: relative; cursor: pointer;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.6); outline: none; transition: 0.4s var(--spring);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .toggle-ios::after {
-            content: ''; position: absolute; top: 2px; left: 2px;
-            width: 26px; height: 26px; background: #fff; border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset -1px -1px 2px rgba(0,0,0,0.2);
-            transition: 0.4s var(--spring);
-        }
-        .toggle-ios:checked {
-            background: var(--active-color);
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--active-color) 50%, transparent);
-        }
+        .toggle-ios { appearance: none; -webkit-appearance: none; width: 56px; height: 32px; background: rgba(0,0,0,0.4); border-radius: 30px; position: relative; cursor: pointer; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.6); outline: none; transition: 0.4s var(--spring); border: 1px solid rgba(255,255,255,0.05); }
+        .toggle-ios::after { content: ''; position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; background: #fff; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset -1px -1px 2px rgba(0,0,0,0.2); transition: 0.4s var(--spring); }
+        .toggle-ios:checked { background: var(--active-color); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--active-color) 50%, transparent); }
         .toggle-ios:checked::after { transform: translateX(24px); }
 
-        /* Аватар профиля */
-        .hologram-avatar {
-            width: 130px; height: 130px; margin: 0 auto 24px;
-            border-radius: 50%; position: relative;
-            display: flex; align-items: center; justify-content: center; font-size: 50px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.6));
-            box-shadow: var(--relief-shadow), 0 0 30px color-mix(in srgb, var(--active-color) 30%, transparent);
-            border: 2px solid rgba(255,255,255,0.1);
-        }
-        .hologram-avatar::before {
-            content: ''; position: absolute; inset: -5px; border-radius: 50%;
-            background: conic-gradient(from 0deg, transparent, var(--active-color), transparent 50%);
-            animation: spin 4s linear infinite; z-index: -1; filter: blur(10px); opacity: 0.5;
-        }
+        .hologram-avatar { width: 130px; height: 130px; margin: 0 auto 24px; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; font-size: 50px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.6)); box-shadow: var(--relief-shadow), 0 0 30px color-mix(in srgb, var(--active-color) 30%, transparent); border: 2px solid rgba(255,255,255,0.1); }
+        .hologram-avatar::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; background: conic-gradient(from 0deg, transparent, var(--active-color), transparent 50%); animation: spin 4s linear infinite; z-index: -1; filter: blur(10px); opacity: 0.5; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* SVG Иконки */
         .svg-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
     </style>
 </head>
 <body>
     <div class="noise-overlay"></div>
     <div class="dark-aurora"></div>
-
     <div id="app" class="container"></div>
 
     <script>
-        // ИНИЦИАЛИЗАЦИЯ
         const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.enableClosingConfirmation();
-        tg.setHeaderColor('#050507');
-        tg.setBackgroundColor('#050507');
+        tg.expand(); tg.enableClosingConfirmation();
+        tg.setHeaderColor('#050507'); tg.setBackgroundColor('#050507');
         
         const SERVERS = [
             {id:1,name:"RED",color:"#FF3B30"},{id:2,name:"GREEN",color:"#34C759"},{id:3,name:"BLUE",color:"#0A84FF"},{id:4,name:"YELLOW",color:"#FFCC00"},{id:5,name:"ORANGE",color:"#FF9500"},{id:6,name:"PURPLE",color:"#AF52DE"},{id:7,name:"LIME",color:"#ccff00"},{id:8,name:"PINK",color:"#FF2D55"},{id:9,name:"CHERRY",color:"#AC3939"},{id:10,name:"BLACK",color:"#8E8E93"},{id:11,name:"INDIGO",color:"#5856D6"},{id:12,name:"WHITE",color:"#FFFFFF"},{id:13,name:"MAGENTA",color:"#C406C4"},{id:14,name:"CRIMSON",color:"#D9133B"},{id:15,name:"GOLD",color:"#F1B61F"},{id:16,name:"AZURE",color:"#3097FF"},{id:17,name:"PLATINUM",color:"#868480"},{id:18,name:"AQUA",color:"#0DEDED"},{id:19,name:"GRAY",color:"#C7C2C1"},{id:20,name:"ICE",color:"#B6F1FE"},{id:21,name:"CHILLI",color:"#FE2726"},{id:22,name:"CHOCO",color:"#BF835C"},{id:23,name:"MOSCOW",color:"#FF2B3B"},{id:24,name:"SPB",color:"#11A6FA"},{id:25,name:"UFA",color:"#FFBA08"},{id:26,name:"SOCHI",color:"#01AFD6"},{id:27,name:"KAZAN",color:"#007DB2"},{id:28,name:"SAMARA",color:"#82339D"},{id:29,name:"ROSTOV",color:"#FBB040"},{id:30,name:"ANAPA",color:"#24ACF8"},{id:31,name:"EKB",color:"#93F0A4"},{id:32,name:"KRASNODAR",color:"#A03429"},{id:33,name:"ARZAMAS",color:"#FFF72D"},{id:34,name:"NOVOSIB",color:"#99D53B"},{id:35,name:"GROZNY",color:"#009622"},{id:36,name:"SARATOV",color:"#0597EB"},{id:37,name:"OMSK",color:"#58E1A5"},{id:38,name:"IRKUTSK",color:"#06E1FF"},{id:39,name:"VOLGOGRAD",color:"#FE0000"},{id:40,name:"VORONEZH",color:"#FFF200"},{id:41,name:"BELGOROD",color:"#0039A6"},{id:42,name:"MAKHACHKALA",color:"#42AD42"},{id:43,name:"VLADIKAVKAZ",color:"#8EB0D9"},{id:44,name:"VLADIVOSTOK",color:"#3A95FF"},{id:45,name:"KALININGRAD",color:"#F0EBC9"},{id:46,name:"CHELYABINSK",color:"#FF6B00"},{id:47,name:"KRASNOYARSK",color:"#D99D1C"},{id:48,name:"CHEBOKSARY",color:"#6CBB74"},{id:49,name:"KHABAROVSK",color:"#0184C4"},{id:50,name:"PERM",color:"#FFD700"},{id:51,name:"TULA",color:"#F2B647"},{id:52,name:"RYAZAN",color:"#C659EB"},{id:53,name:"MURMANSK",color:"#396797"},{id:54,name:"PENZA",color:"#53E295"},{id:55,name:"KURSK",color:"#9E1C00"},{id:56,name:"ARKHANGELSK",color:"#FF007A"},{id:57,name:"ORENBURG",color:"#E39012"},{id:58,name:"KIROV",color:"#939393"},{id:59,name:"KEMEROVO",color:"#F61A1B"},{id:60,name:"TYUMEN",color:"#44C9F3"},{id:61,name:"TOLYATTI",color:"#8F00FF"},{id:62,name:"IVANOVO",color:"#D5AF80"},{id:63,name:"STAVROPOL",color:"#3F6BE9"},{id:64,name:"SMOLENSK",color:"#EE703E"},{id:65,name:"PSKOV",color:"#63A62E"},{id:66,name:"BRYANSK",color:"#26EEBE"},{id:67,name:"OREL",color:"#FFEA03"},{id:68,name:"YAROSLAVL",color:"#D01D0D"},{id:69,name:"BARNAUL",color:"#797CC7"},{id:70,name:"LIPETSK",color:"#CCD0DA"},{id:71,name:"ULYANOVSK",color:"#B55624"},{id:72,name:"YAKUTSK",color:"#44BFFC"},{id:73,name:"TAMBOV",color:"#959595"},{id:74,name:"BRATSK",color:"#e0c1a0"},{id:75,name:"ASTRAKHAN",color:"#F7243A"},{id:76,name:"CHITA",color:"#35CA68"},{id:77,name:"KOSTROMA",color:"#F1B10D"},{id:78,name:"VLADIMIR",color:"#F58041"},{id:79,name:"KALUGA",color:"#3032A4"},{id:80,name:"NOVGOROD",color:"#FFC700"},{id:81,name:"TAGANROG",color:"#984FCF"},{id:82,name:"VOLOGDA",color:"#F54141"},{id:83,name:"TVER",color:"#84B6FF"},{id:84,name:"TOMSK",color:"#00e9b2"},{id:85,name:"IZHEVSK",color:"#00A2A4"},{id:86,name:"SURGUT",color:"#4F27DE"},{id:87,name:"PODOLSK",color:"#B7A67E"},{id:88,name:"MAGADAN",color:"#B1C1C7"},{id:89,name:"CHEREPOVETS",color:"#3885E9"},{id:90,name:"NORILSK",color:"#AED4F6"}
         ];
         
-        // Стейт и АПИ (Логика неизменна)
         let state = { view: 'servers', currentServer: null, user: null, items: [], myOrders: [], loading: false, currentCategory: 'all' };
         
-        function callBot(action, data = {}) {
-            return new Promise((resolve) => {
-                const id = Date.now() + '_' + Math.random();
-                window[id] = resolve;
-                tg.sendData(JSON.stringify({ action, ...data, _id: id }));
-                setTimeout(() => { if (window[id]) { delete window[id]; resolve(null); } }, 10000);
-            });
-        }
-        
-        function showToast(msg, type = 'info') {
-            tg.showPopup({ title: type === 'success' ? 'Успех' : type === 'error' ? 'Ошибка' : 'Инфо', message: msg, buttons: [{type: 'ok'}] });
-        }
+        function callBot(action, data = {}) { return new Promise((resolve) => { const id = Date.now() + '_' + Math.random(); window[id] = resolve; tg.sendData(JSON.stringify({ action, ...data, _id: id })); setTimeout(() => { if (window[id]) { delete window[id]; resolve(null); } }, 10000); }); }
+        function showToast(msg, type = 'info') { tg.showPopup({ title: type === 'success' ? 'Успех' : type === 'error' ? 'Ошибка' : 'Инфо', message: msg, buttons: [{type: 'ok'}] }); }
         
         async function loadProfile() { if (!state.user) { const res = await callBot('get_profile'); if (res) state.user = res; } }
-        async function loadItems() {
-            if (!state.currentServer) return;
-            state.loading = true; render();
-            const res = await callBot('get_items', { server_id: state.currentServer.id, category: state.currentCategory === 'all' ? null : state.currentCategory });
-            if (res) state.items = res;
-            state.loading = false; render();
-        }
+        async function loadItems() { if (!state.currentServer) return; state.loading = true; render(); const res = await callBot('get_items', { server_id: state.currentServer.id, category: state.currentCategory === 'all' ? null : state.currentCategory }); if (res) state.items = res; state.loading = false; render(); }
         async function loadMyOrders() { const res = await callBot('my_orders'); if (res) state.myOrders = res; }
         
-        async function createItem(data) {
-            const res = await callBot('create_item', data);
-            if (res?.success) { showToast('Готово!', 'success'); await loadItems(); state.view = 'market'; render(); }
-            else { showToast('Ошибка: ' + (res?.error || 'Сбой'), 'error'); }
-        }
+        async function createItem(data) { const res = await callBot('create_item', data); if (res?.success) { showToast('Готово!', 'success'); await loadItems(); state.view = 'market'; render(); } else { showToast('Ошибка: ' + (res?.error || 'Сбой'), 'error'); } }
+        async function buyItem(itemId) { tg.showConfirm(`Подтверждаете покупку?`, async (confirmed) => { if (confirmed) { const res = await callBot('buy_item', { item_id: itemId }); if (res?.success) { showToast('Сделка открыта!', 'success'); await loadMyOrders(); render(); } else { showToast('Ошибка: ' + (res?.error || 'Отмена'), 'error'); } } }); }
+        async function confirmOrder(orderId) { tg.showConfirm(`Завершить сделку?`, async (confirmed) => { if (confirmed) { const res = await callBot('confirm_order', { order_id: orderId }); if (res?.success) { showToast('Успешно!', 'success'); await loadMyOrders(); await loadProfile(); render(); } else { showToast('Сбой', 'error'); } } }); }
         
-        async function buyItem(itemId) {
-            tg.showConfirm(`Подтверждаете покупку товара?`, async (confirmed) => {
-                if (confirmed) {
-                    const res = await callBot('buy_item', { item_id: itemId });
-                    if (res?.success) { showToast('Сделка открыта!', 'success'); await loadMyOrders(); render(); }
-                    else { showToast('Ошибка: ' + (res?.error || 'Отмена'), 'error'); }
-                }
-            });
-        }
-        
-        async function confirmOrder(orderId) {
-            tg.showConfirm(`Завершить сделку?`, async (confirmed) => {
-                if (confirmed) {
-                    const res = await callBot('confirm_order', { order_id: orderId });
-                    if (res?.success) { showToast('Успешно!', 'success'); await loadMyOrders(); await loadProfile(); render(); }
-                    else { showToast('Сбой', 'error'); }
-                }
-            });
-        }
-        
-        function getRank(deals) {
-            if (deals >= 50) return { name: 'VIP Legend', clr: '#FF2D55' };
-            if (deals >= 20) return { name: 'Master', clr: '#BF5AF2' };
-            if (deals >= 5) return { name: 'Trader', clr: '#0A84FF' };
-            return { name: 'Novice', clr: '#34C759' };
-        }
+        function getRank(deals) { if (deals >= 50) return { name: 'VIP Legend', clr: '#FF2D55' }; if (deals >= 20) return { name: 'Master', clr: '#BF5AF2' }; if (deals >= 5) return { name: 'Trader', clr: '#0A84FF' }; return { name: 'Novice', clr: '#34C759' }; }
 
-        // SVG Иконки
         const iBack = `<svg class="svg-icon"><path d="M15 18l-6-6 6-6"/></svg>`;
         const iAdd = `<svg class="svg-icon"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
         const iProf = `<svg class="svg-icon"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
 
-        // РЕНДЕРЫ (С каскадными анимациями)
         function renderServers() {
             return `
                 <div class="page-enter">
                     <div class="header">
                         <div class="header-title">Выбор сервера</div>
                     </div>
-                    <div class="glass-relief" style="padding: 24px;">
-                        <div class="servers-grid">
-                            ${SERVERS.map((s, i) => `
-                                <div class="server-card stagger-item" style="animation-delay: ${i * 0.02}s" 
-                                     onclick="window.selectServer(${s.id}, '${s.color}')">
-                                    <div class="server-glow" style="--srv-color: ${s.color};"></div>
-                                    <div class="server-name">${s.name}</div>
-                                </div>
-                            `).join('')}
-                        </div>
+                    
+                    <div class="servers-grid">
+                        ${SERVERS.map((s, i) => `
+                            <!-- Прямоугольная плашка -->
+                            <div class="server-plate stagger-item" style="--srv-color: ${s.color}; animation-delay: ${(i % 15) * 0.02}s" 
+                                 onclick="window.selectServer(${s.id}, '${s.color}')">
+                                <span class="server-plate-name">${s.name}</span>
+                                <div class="server-dot"></div>
+                            </div>
+                        `).join('')}
                     </div>
                     
-                    <div class="fab-container" style="bottom: 24px;">
-                        <button class="glass-relief btn-3d" style="width: calc(100% - 32px); max-width: 568px;" onclick="window.navigate('profile')">
+                    <div class="fab-container">
+                        <button class="glass-relief btn-3d" style="width: 100%; border-radius: 30px;" onclick="window.navigate('profile')">
                             Мой профиль
                         </button>
                     </div>
@@ -420,11 +307,14 @@
                         <div class="btn-icon" onclick="window.navigate('profile')">${iProf}</div>
                     </div>
                     
-                    <div class="segmented-tabs stagger-item">
-                        ${cats.map(cat => `
-                            <div class="tab-item ${state.currentCategory === cat.id ? 'active' : ''}" 
-                                 onclick="window.setCategory('${cat.id}')">${cat.n}</div>
-                        `).join('')}
+                    <!-- Исправленный враппер для теней -->
+                    <div class="tabs-scroll-wrapper stagger-item">
+                        <div class="segmented-tabs">
+                            ${cats.map(cat => `
+                                <div class="tab-item ${state.currentCategory === cat.id ? 'active' : ''}" 
+                                     onclick="window.setCategory('${cat.id}')">${cat.n}</div>
+                            `).join('')}
+                        </div>
                     </div>
                     
                     ${state.loading ? `<div class="glass-relief" style="padding:40px; text-align:center;">Поиск данных...</div>` :
@@ -435,7 +325,7 @@
                             <p style="color: var(--text-muted); font-size: 15px;">Станьте первым продавцом</p>
                         </div>
                     ` : state.items.map((item, i) => `
-                        <div class="glass-relief market-card stagger-item" style="animation-delay: ${i * 0.08}s" onclick="window.buyItem('${item.item_id}')">
+                        <div class="glass-relief market-card stagger-item" style="animation-delay: ${(i % 10) * 0.05}s" onclick="window.buyItem('${item.item_id}')">
                             <div class="card-top">
                                 <span class="card-badge">Рейтинг ${item.seller_rating || 0}</span>
                             </div>
@@ -448,7 +338,6 @@
                         </div>
                     `).join('')}
 
-                    <!-- Всплывающая плавающая кнопка (FAB) -->
                     <div class="fab-container">
                         <div class="fab-btn" onclick="window.navigate('create')">
                             ${iAdd} Разместить объявление
@@ -566,41 +455,13 @@
             `;
         }
         
-        // ГЛОБАЛЬНЫЕ ФУНКЦИИ
-        window.navigate = async (view) => {
-            state.view = view;
-            if (view === 'profile') { await loadProfile(); await loadMyOrders(); }
-            if (view === 'orders') await loadMyOrders();
-            if (view === 'market' && state.currentServer) await loadItems();
-            render();
-        };
-        
-        window.selectServer = (id, color) => { 
-            state.currentServer = SERVERS.find(s => s.id === id);
-            // Изменение глобального цвета
-            document.documentElement.style.setProperty('--active-color', color);
-            navigate('market'); 
-        };
-        
+        window.navigate = async (view) => { state.view = view; if (view === 'profile') { await loadProfile(); await loadMyOrders(); } if (view === 'orders') await loadMyOrders(); if (view === 'market' && state.currentServer) await loadItems(); render(); };
+        window.selectServer = (id, color) => { state.currentServer = SERVERS.find(s => s.id === id); document.documentElement.style.setProperty('--active-color', color); navigate('market'); };
         window.setCategory = (cat) => { state.currentCategory = cat; loadItems(); };
-        window.buyItem = buyItem;
-        window.confirmOrder = confirmOrder;
+        window.buyItem = buyItem; window.confirmOrder = confirmOrder;
+        window.submitCreate = () => { const data = { server_id: state.currentServer.id, category: document.getElementById('catSelect')?.value, name: document.getElementById('itemName')?.value, description: document.getElementById('itemDesc')?.value, price: parseInt(document.getElementById('itemPrice')?.value), haggle: document.getElementById('itemHaggle')?.checked || false }; if (!data.name || !data.price) { showToast('Заполните название и цену', 'error'); return; } createItem(data); };
         
-        window.submitCreate = () => {
-            const data = {
-                server_id: state.currentServer.id, category: document.getElementById('catSelect')?.value,
-                name: document.getElementById('itemName')?.value, description: document.getElementById('itemDesc')?.value,
-                price: parseInt(document.getElementById('itemPrice')?.value), haggle: document.getElementById('itemHaggle')?.checked || false
-            };
-            if (!data.name || !data.price) { showToast('Заполните название и цену', 'error'); return; }
-            createItem(data);
-        };
-        
-        function render() {
-            const views = { servers: renderServers, market: renderMarket, profile: renderProfile, orders: renderOrders, create: renderCreateForm };
-            document.getElementById('app').innerHTML = (views[state.view] || renderServers)();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        function render() { const views = { servers: renderServers, market: renderMarket, profile: renderProfile, orders: renderOrders, create: renderCreateForm }; document.getElementById('app').innerHTML = (views[state.view] || renderServers)(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         
         loadProfile().then(render);
     </script>
