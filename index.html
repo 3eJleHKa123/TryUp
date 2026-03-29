@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TradeMarket Pro | Торговая платформа</title>
+    <title>TradeMarket Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- Google Fonts + Font Awesome + Tailwind + GSAP для анимаций -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    
     <style>
+        /* ========== БАЗОВЫЕ ПЕРЕМЕННЫЕ ========== */
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59,130,246,0.5);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: rgba(255,255,255,0.1);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -20,35 +28,15 @@
         }
         
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--tg-theme-bg-color, #0a0a0f);
-            color: var(--tg-theme-text-color, #ffffff);
-            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
-        /* Анимации */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 5px rgba(0, 136, 204, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(0, 136, 204, 0.6); }
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-        
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            100% { transform: scale(1.4); opacity: 0; }
-        }
-        
-        @keyframes slideUp {
+        /* ========== АНИМАЦИИ ========== */
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(30px);
@@ -59,55 +47,67 @@
             }
         }
         
-        @keyframes slideInLeft {
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--accent-glow); }
+            50% { box-shadow: 0 0 20px var(--accent-glow); }
+        }
+        
+        @keyframes slideIn {
             from {
+                transform: translateX(100%);
                 opacity: 0;
-                transform: translateX(-30px);
             }
             to {
-                opacity: 1;
                 transform: translateX(0);
+                opacity: 1;
             }
         }
         
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .animate-in {
+            animation: fadeInUp 0.4s ease-out forwards;
         }
         
-        /* Glassmorphism эффекты */
+        /* ========== ГЛАССМОРФИЗМ ========== */
         .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
+            background: rgba(26, 26, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
         }
         
         .glass-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 28px;
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: linear-gradient(135deg, rgba(26,26,42,0.9) 0%, rgba(18,18,26,0.95) 100%);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
         
         .glass-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(0, 136, 204, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         
-        /* Неоновые кнопки */
-        .neon-btn {
-            background: linear-gradient(90deg, #0088cc, #00aaff);
+        /* ========== НЕОНОВЫЕ КНОПКИ ========== */
+        .btn-neon {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
             border: none;
-            padding: 14px 28px;
+            padding: 14px 24px;
             border-radius: 40px;
             font-weight: 600;
             font-size: 16px;
@@ -118,7 +118,7 @@
             overflow: hidden;
         }
         
-        .neon-btn::before {
+        .btn-neon::before {
             content: '';
             position: absolute;
             top: 0;
@@ -129,22 +129,46 @@
             transition: left 0.5s ease;
         }
         
-        .neon-btn:hover::before {
+        .btn-neon:hover::before {
             left: 100%;
         }
         
-        .neon-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(0, 136, 204, 0.5);
+        .btn-neon:active {
+            transform: scale(0.98);
         }
         
-        /* Карточки серверов */
-        .server-card {
-            background: linear-gradient(135deg, rgba(30,30,40,0.9) 0%, rgba(20,20,30,0.95) 100%);
-            border-radius: 24px;
-            padding: 20px;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-outline:active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        /* ========== КАРТОЧКИ СЕРВЕРОВ ========== */
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            padding: 4px;
+        }
+        
+        .server-card {
+            background: linear-gradient(135deg, #1a1a2a 0%, #12121a 100%);
+            border-radius: 20px;
+            padding: 16px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
             position: relative;
             overflow: hidden;
         }
@@ -156,223 +180,229 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.1) 0%, transparent 80%);
+            background: radial-gradient(circle at 50% 50%, rgba(59,130,246,0.2) 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.3s;
-            pointer-events: none;
+        }
+        
+        .server-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
         }
         
         .server-card:hover::after {
             opacity: 1;
         }
         
-        .server-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        .server-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
         }
         
-        /* Анимированный градиентный текст */
-        .gradient-text {
-            background: linear-gradient(90deg, #0088cc, #00aaff, #66ccff, #0088cc);
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: gradientShift 3s ease infinite;
+        .server-name {
+            font-weight: 600;
+            font-size: 14px;
         }
         
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        .server-id {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
         
-        /* Скелетон загрузки */
+        /* ========== КАРТОЧКИ ТОВАРОВ ========== */
+        .item-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+        }
+        
+        .item-card:active {
+            transform: scale(0.98);
+        }
+        
+        /* ========== ВКЛАДКИ ========== */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-secondary);
+            padding: 8px;
+            border-radius: 40px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 32px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+        }
+        
+        .tab.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        /* ========== ФОРМЫ ========== */
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+        
+        /* ========== ЗВЁЗДЫ РЕЙТИНГА ========== */
+        .stars {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .star {
+            font-size: 32px;
+            cursor: pointer;
+            color: #4a4a5a;
+            transition: all 0.2s;
+        }
+        
+        .star.active {
+            color: #fbbf24;
+            text-shadow: 0 0 10px #fbbf24;
+        }
+        
+        /* ========== СТАТУСЫ ========== */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending { background: var(--warning); color: #1a1a2a; }
+        .status-completed { background: var(--success); color: white; }
+        .status-cancelled { background: var(--danger); color: white; }
+        
+        /* ========== РАНГИ ========== */
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .rank-novice { background: linear-gradient(135deg, #4caf50, #2e7d32); }
+        .rank-trader { background: linear-gradient(135deg, #ff9800, #ed6c02); }
+        .rank-master { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
+        .rank-legend { background: linear-gradient(135deg, #f44336, #d32f2f); }
+        
+        /* ========== ПРОФИЛЬ ========== */
+        .profile-header {
+            background: linear-gradient(135deg, #1e1e3a, #0f0f1a);
+            border-radius: 32px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%);
+            animation: pulse 3s infinite;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ========== СКЕЛЕТОН ========== */
         .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background: linear-gradient(90deg, #1a1a2a 25%, #2a2a3a 50%, #1a1a2a 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             border-radius: 16px;
+            height: 100px;
+            margin-bottom: 12px;
         }
         
-        /* Скроллбар */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        /* ========== УТИЛИТЫ ========== */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+            padding-bottom: 80px;
         }
         
-        ::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #0088cc, #00aaff);
-            border-radius: 10px;
-        }
-        
-        /* Кастомные чекбоксы */
-        .custom-checkbox {
-            width: 24px;
-            height: 24px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .custom-checkbox.checked {
-            background: linear-gradient(135deg, #0088cc, #00aaff);
-        }
-        
-        /* Анимированные звезды рейтинга */
-        .star-rating {
-            display: flex;
-            gap: 4px;
-            direction: rtl;
-        }
-        
-        .star-rating input {
+        .hidden {
             display: none;
         }
         
-        .star-rating label {
-            font-size: 28px;
-            color: rgba(255,255,255,0.2);
-            cursor: pointer;
-            transition: all 0.2s;
+        .text-gradient {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
-        .star-rating label:hover,
-        .star-rating label:hover ~ label,
-        .star-rating input:checked ~ label {
-            color: #ffc107;
-            text-shadow: 0 0 10px #ffc107;
-            transform: scale(1.1);
-        }
-        
-        /* Эффект ряби при нажатии */
-        .ripple {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ripple:after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.5);
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s;
-        }
-        
-        .ripple:active:after {
-            width: 200%;
-            height: 200%;
-            opacity: 0;
-        }
-        
-        /* Анимация появления элементов */
-        .animate-item {
-            animation: slideUp 0.4s ease-out forwards;
-            opacity: 0;
-        }
-        
-        /* Пульсирующий индикатор онлайн */
-        .online-dot {
-            width: 10px;
-            height: 10px;
-            background: #22c55e;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse-ring 1.5s infinite;
-        }
-        
-        /* 3D-тень для карточек */
-        .card-3d {
-            transform-style: preserve-3d;
-            transition: transform 0.3s;
-        }
-        
-        .card-3d:hover {
-            transform: rotateX(2deg) rotateY(2deg);
-        }
-        
-        /* Блики на карточках */
-        .shine {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .shine::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s;
-        }
-        
-        .shine:hover::before {
-            left: 150%;
-        }
-        
-        /* Анимированный фон */
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 20% 50%, rgba(0,136,204,0.03) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(0,170,255,0.03) 0%, transparent 50%);
-        }
-        
-        /* Модальное окно */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.2s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .modal-content {
-            background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
-            border-radius: 32px;
-            padding: 24px;
-            max-width: 90%;
-            width: 340px;
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: slideUp 0.3s ease;
-        }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+        .mt-4 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+        .gap-2 { gap: 8px; }
+        .flex { display: flex; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .text-center { text-align: center; }
+        .text-secondary { color: var(--text-secondary); }
+        .text-accent { color: var(--accent); }
     </style>
 </head>
 <body>
-    <div class="animated-bg"></div>
-    <div id="root" class="container mx-auto px-4 py-6 max-w-2xl"></div>
-    
+    <div id="app" class="container"></div>
+
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
@@ -472,17 +502,29 @@
             {id:90,name:"NORILSK",color:"#AED4F6"}
         ];
         
-        // Состояние
+        // ========== СОСТОЯНИЕ ==========
         let state = {
             view: 'servers',
             currentServer: null,
             user: null,
             items: [],
+            myOrders: [],
             loading: false,
-            myOrders: []
+            currentCategory: 'all'
         };
         
-        // Вспомогательные функции
+        // ========== ФУНКЦИИ ОБЩЕНИЯ С БОТОМ ==========
+        function callBot(action, data = {}) {
+            return new Promise((resolve) => {
+                const id = Date.now() + '_' + Math.random();
+                window[id] = resolve;
+                tg.sendData(JSON.stringify({ action, ...data, _id: id }));
+                setTimeout(() => {
+                    if (window[id]) { delete window[id]; resolve(null); }
+                }, 10000);
+            });
+        }
+        
         function showToast(msg, type = 'info') {
             tg.showPopup({
                 title: type === 'success' ? '✅ Успех' : type === 'error' ? '❌ Ошибка' : 'ℹ️ Информация',
@@ -491,39 +533,34 @@
             });
         }
         
-        function callBot(action, data = {}) {
-            return new Promise((resolve) => {
-                const callbackId = 'cb_' + Date.now() + '_' + Math.random();
-                window[callbackId] = resolve;
-                tg.sendData(JSON.stringify({ action, ...data, _callback: callbackId }));
-                setTimeout(() => {
-                    if (window[callbackId]) {
-                        delete window[callbackId];
-                        resolve(null);
-                    }
-                }, 10000);
-            });
-        }
-        
+        // ========== ЗАГРУЗКА ДАННЫХ ==========
         async function loadProfile() {
             const res = await callBot('get_profile');
-            if (res) state.user = res;
-            render();
+            if (res) { state.user = res; render(); }
         }
         
         async function loadItems() {
             if (!state.currentServer) return;
             state.loading = true;
             render();
-            const res = await callBot('get_items', { server_id: state.currentServer.id });
+            const res = await callBot('get_items', { 
+                server_id: state.currentServer.id,
+                category: state.currentCategory === 'all' ? null : state.currentCategory
+            });
             if (res) state.items = res;
             state.loading = false;
             render();
         }
         
+        async function loadMyOrders() {
+            const res = await callBot('my_orders');
+            if (res) state.myOrders = res;
+            render();
+        }
+        
         async function createItem(data) {
             const res = await callBot('create_item', data);
-            if (res && res.success) {
+            if (res?.success) {
                 showToast('Объявление опубликовано!', 'success');
                 await loadItems();
                 state.view = 'market';
@@ -535,47 +572,55 @@
         
         async function buyItem(itemId) {
             const res = await callBot('buy_item', { item_id: itemId });
-            if (res && res.success) {
-                showToast('Сделка создана! Перейдите в профиль', 'success');
+            if (res?.success) {
+                showToast('Сделка создана!', 'success');
                 await loadMyOrders();
+                render();
             } else {
-                showToast('Ошибка: ' + (res?.error || 'Не удалось создать сделку'), 'error');
+                showToast('Ошибка: ' + (res?.error || 'Не удалось'), 'error');
             }
         }
         
-        async function loadMyOrders() {
-            const res = await callBot('my_orders');
-            if (res) state.myOrders = res;
-            render();
+        async function confirmOrder(orderId) {
+            const res = await callBot('confirm_order', { order_id: orderId });
+            if (res?.success) {
+                showToast('Сделка завершена!', 'success');
+                await loadMyOrders();
+                await loadProfile();
+                render();
+            } else {
+                showToast('Ошибка подтверждения', 'error');
+            }
         }
         
-        // ========== КОМПОНЕНТЫ ==========
+        // ========== РАНГИ ==========
+        function getRankClass(deals) {
+            if (deals >= 50) return 'rank-legend';
+            if (deals >= 20) return 'rank-master';
+            if (deals >= 5) return 'rank-trader';
+            return 'rank-novice';
+        }
         
-        function ServersView() {
+        function getRankName(deals) {
+            if (deals >= 50) return '👑 ЛЕГЕНДА';
+            if (deals >= 20) return '⭐ МАСТЕР';
+            if (deals >= 5) return '🌟 ТОРГОВЕЦ';
+            return '🌱 НОВИЧОК';
+        }
+        
+        // ========== ОТРИСОВКА ==========
+        
+        function renderServers() {
             return `
-                <div class="space-y-6">
-                    <div class="text-center mb-8 animate-slide-up">
-                        <h1 class="text-4xl font-bold gradient-text mb-2">TradeMarket</h1>
-                        <p class="text-gray-400">Выберите игровой сервер</p>
-                        <div class="flex justify-center gap-2 mt-3">
-                            <span class="inline-flex items-center gap-1 text-xs text-gray-500"><i class="fas fa-server"></i> ${SERVERS.length} серверов</span>
-                            <span class="inline-flex items-center gap-1 text-xs text-gray-500"><i class="fas fa-users"></i> 5000+ игроков</span>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        ${SERVERS.map((server, idx) => `
-                            <div class="server-card shine ripple" data-server-id="${server.id}" style="border-left: 4px solid ${server.color}; animation-delay: ${idx * 0.01}s">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-2xl">🎮</span>
-                                    <span class="online-dot"></span>
-                                </div>
-                                <h3 class="font-bold text-lg" style="color: ${server.color}">${server.name}</h3>
-                                <p class="text-xs text-gray-500 mt-2">ID: ${server.id}</p>
-                                <div class="mt-3 flex items-center justify-between">
-                                    <span class="text-xs text-gray-400"><i class="fas fa-chart-line"></i> активен</span>
-                                    <button class="text-sm neon-btn py-1 px-3 text-xs">Выбрать →</button>
-                                </div>
+                <div class="animate-in">
+                    <h1 class="text-gradient" style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">TradeMarket</h1>
+                    <p class="text-secondary" style="margin-bottom: 24px;">Выберите сервер для торговли</p>
+                    <div class="server-grid">
+                        ${SERVERS.map(s => `
+                            <div class="server-card" data-id="${s.id}" style="border-top: 3px solid ${s.color}">
+                                <div class="server-icon">🎮</div>
+                                <div class="server-name">${s.name}</div>
+                                <div class="server-id">ID ${s.id}</div>
                             </div>
                         `).join('')}
                     </div>
@@ -583,204 +628,148 @@
             `;
         }
         
-        function MarketView() {
+        function renderMarket() {
             const categories = [
-                {id:'all',name:'Все',icon:'fa-grid-2'},
-                {id:'car',name:'Машины',icon:'fa-car'},
-                {id:'house',name:'Дома',icon:'fa-house'},
-                {id:'skin',name:'Скины',icon:'fa-palette'},
-                {id:'money',name:'Валюта',icon:'fa-coins'},
-                {id:'accessory',name:'Аксессуары',icon:'fa-gem'}
+                {id:'all',name:'Все',icon:'📦'},
+                {id:'car',name:'Машины',icon:'🚗'},
+                {id:'house',name:'Дома',icon:'🏠'},
+                {id:'skin',name:'Скины',icon:'🎨'},
+                {id:'money',name:'Валюта',icon:'💰'},
+                {id:'accessory',name:'Аксессуары',icon:'💎'}
             ];
             
             return `
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <button onclick="window.navigate('servers')" class="glass p-2 rounded-full w-10 h-10 flex items-center justify-center">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <div class="text-center">
-                            <h2 class="text-2xl font-bold" style="color: ${state.currentServer?.color}">${state.currentServer?.name}</h2>
-                            <p class="text-xs text-gray-500">торговая площадка</p>
-                        </div>
-                        <button onclick="window.navigate('create')" class="neon-btn py-2 px-4 text-sm">
-                            <i class="fas fa-plus"></i> Продать
-                        </button>
+                <div class="animate-in">
+                    <div class="flex-between" style="margin-bottom: 16px;">
+                        <button onclick="window.navigate('servers')" class="btn-outline" style="padding: 8px 16px;">← Назад</button>
+                        <h2 style="font-size: 20px; font-weight: bold; color: ${state.currentServer?.color}">${state.currentServer?.name}</h2>
+                        <button onclick="window.navigate('create')" class="btn-neon" style="padding: 8px 16px; font-size: 14px;">➕ Продать</button>
                     </div>
                     
-                    <div class="flex gap-2 overflow-x-auto pb-2">
+                    <div class="tabs" style="margin-bottom: 20px;">
                         ${categories.map(cat => `
-                            <button onclick="window.setCategory('${cat.id}')" 
-                                class="px-4 py-2 rounded-full whitespace-nowrap transition-all ${state.currentCategory === cat.id ? 'neon-btn py-2 px-4' : 'glass'}"
-                                style="${state.currentCategory === cat.id ? '' : 'background: rgba(255,255,255,0.05)'}">
-                                <i class="fas ${cat.icon} mr-1"></i>${cat.name}
-                            </button>
+                            <div class="tab ${state.currentCategory === cat.id ? 'active' : ''}" onclick="window.setCategory('${cat.id}')">
+                                ${cat.icon} ${cat.name}
+                            </div>
                         `).join('')}
                     </div>
                     
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
-                        <input type="text" id="searchInput" placeholder="Поиск товаров..." 
-                            class="w-full pl-12 pr-4 py-3 rounded-2xl glass border-0 focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    
                     ${state.loading ? `
-                        <div class="space-y-3">
-                            ${[1,2,3].map(() => `<div class="skeleton h-28 rounded-2xl"></div>`).join('')}
-                        </div>
+                        <div class="skeleton"></div>
+                        <div class="skeleton"></div>
+                        <div class="skeleton"></div>
                     ` : state.items.length === 0 ? `
-                        <div class="text-center py-16 glass rounded-3xl">
-                            <i class="fas fa-store text-5xl text-gray-600 mb-4"></i>
-                            <p class="text-gray-400">Нет объявлений на этом сервере</p>
-                            <button onclick="window.navigate('create')" class="neon-btn mt-4 py-2 px-6 text-sm">
-                                Создать первое объявление
-                            </button>
+                        <div class="glass-card" style="padding: 48px; text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                            <p class="text-secondary">Нет объявлений на этом сервере</p>
+                            <button onclick="window.navigate('create')" class="btn-neon" style="margin-top: 20px;">Создать первое</button>
                         </div>
-                    ` : `
-                        <div class="space-y-3">
-                            ${state.items.map((item, idx) => `
-                                <div class="glass-card p-4 animate-item" style="animation-delay: ${idx * 0.05}s">
-                                    <div class="flex gap-4">
-                                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br ${state.currentServer.color}20 flex items-center justify-center">
-                                            <i class="fas fa-box-open text-2xl" style="color: ${state.currentServer.color}"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center gap-2 mb-1">
-                                                <span class="text-xs px-2 py-1 rounded-full glass">${state.currentServer.name}</span>
-                                                <span class="text-xs text-yellow-500">
-                                                    ${item.seller_rank_icon || '🌱'} ${item.seller_rating}★
-                                                </span>
-                                            </div>
-                                            <h3 class="font-bold text-lg">${item.name}</h3>
-                                            <p class="text-sm text-gray-400 line-clamp-2">${item.description || 'Без описания'}</p>
-                                            <div class="flex items-center justify-between mt-3">
-                                                <div>
-                                                    <span class="text-2xl font-bold gradient-text">${item.price?.toLocaleString() || 0}</span>
-                                                    <span class="text-xs text-gray-500">💰</span>
-                                                </div>
-                                                <button onclick="window.buyItem('${item.item_id}')" 
-                                                    class="neon-btn py-2 px-5 text-sm">
-                                                    Купить
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
+                    ` : state.items.map(item => `
+                        <div class="item-card">
+                            <div class="flex-between" style="margin-bottom: 8px;">
+                                <span class="status-badge" style="background: ${state.currentServer?.color}20; color: ${state.currentServer?.color}">${state.currentServer?.name}</span>
+                                <span class="text-secondary" style="font-size: 12px;">⭐ ${item.seller_rating || 0}</span>
+                            </div>
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${item.name}</h3>
+                            <p class="text-secondary" style="font-size: 14px; margin-bottom: 12px;">${item.description || 'Без описания'}</p>
+                            <div class="flex-between">
+                                <span style="font-size: 24px; font-weight: bold; color: var(--accent);">${item.price?.toLocaleString() || 0} 💰</span>
+                                <button onclick="window.buyItem('${item.item_id}')" class="btn-neon" style="padding: 10px 20px;">Купить</button>
+                            </div>
                         </div>
-                    `}
+                    `).join('')}
                 </div>
             `;
         }
         
-        function ProfileView() {
-            const user = state.user || { first_name: 'Загрузка...', rating: 0, deals: 0, seller_deals: 0, buyer_deals: 0, rank: 'Новичок', rank_icon: '🌱' };
+        function renderProfile() {
+            const u = state.user || { first_name: 'Загрузка...', rating: 0, deals: 0, seller_deals: 0, buyer_deals: 0 };
+            const rankClass = getRankClass(u.deals || 0);
+            const rankName = getRankName(u.deals || 0);
             
             return `
-                <div class="space-y-5">
-                    <div class="flex items-center justify-between">
-                        <button onclick="window.navigate('servers')" class="glass p-2 rounded-full w-10 h-10 flex items-center justify-center">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <h2 class="text-2xl font-bold gradient-text">Мой профиль</h2>
-                        <button onclick="window.loadProfile()" class="glass p-2 rounded-full w-10 h-10 flex items-center justify-center">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
+                <div class="animate-in">
+                    <div class="flex-between" style="margin-bottom: 20px;">
+                        <button onclick="window.navigate('servers')" class="btn-outline" style="padding: 8px 16px;">← Назад</button>
+                        <h2 class="text-gradient">Мой профиль</h2>
+                        <button onclick="window.loadProfile()" class="btn-outline" style="padding: 8px 12px;">🔄</button>
                     </div>
                     
-                    <div class="glass-card p-6 text-center relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
-                        <div class="relative">
-                            <div class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mx-auto flex items-center justify-center text-4xl mb-4">
-                                ${user.first_name?.charAt(0) || '👤'}
-                            </div>
-                            <h3 class="text-xl font-bold">${user.first_name}</h3>
-                            <p class="text-gray-400 text-sm">@${user.username || 'user'}</p>
-                            <div class="inline-flex items-center gap-2 mt-2 px-4 py-1 rounded-full glass">
-                                <span class="text-xl">${user.rank_icon}</span>
-                                <span class="font-semibold">${user.rank}</span>
-                            </div>
-                        </div>
+                    <div class="profile-header">
+                        <div class="avatar">${u.first_name?.charAt(0) || '👤'}</div>
+                        <h3 style="font-size: 20px; font-weight: bold;">${u.first_name}</h3>
+                        <p class="text-secondary">@${u.username || 'user'}</p>
+                        <div class="rank-badge ${rankClass}" style="display: inline-flex; margin-top: 12px;">${rankName}</div>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="glass-card p-4 text-center">
-                            <div class="text-3xl font-bold gradient-text">${user.rating || 0}</div>
-                            <div class="text-sm text-gray-400">⭐ Рейтинг</div>
-                            <div class="text-xs text-gray-500">${user.rating_count || 0} оценок</div>
+                    <div class="grid-2" style="margin-bottom: 20px;">
+                        <div class="glass-card" style="padding: 16px; text-align: center;">
+                            <div style="font-size: 28px; font-weight: bold; color: var(--accent);">${u.rating || 0}</div>
+                            <div class="text-secondary">⭐ Рейтинг</div>
                         </div>
-                        <div class="glass-card p-4 text-center">
-                            <div class="text-3xl font-bold text-green-500">${user.deals || 0}</div>
-                            <div class="text-sm text-gray-400">📦 Сделок</div>
+                        <div class="glass-card" style="padding: 16px; text-align: center;">
+                            <div style="font-size: 28px; font-weight: bold; color: #10b981;">${u.deals || 0}</div>
+                            <div class="text-secondary">📦 Сделок</div>
                         </div>
-                        <div class="glass-card p-4 text-center">
-                            <div class="text-3xl font-bold text-orange-500">${user.seller_deals || 0}</div>
-                            <div class="text-sm text-gray-400">🛒 Продаж</div>
+                        <div class="glass-card" style="padding: 16px; text-align: center;">
+                            <div style="font-size: 28px; font-weight: bold; color: #f59e0b;">${u.seller_deals || 0}</div>
+                            <div class="text-secondary">🛒 Продаж</div>
                         </div>
-                        <div class="glass-card p-4 text-center">
-                            <div class="text-3xl font-bold text-purple-500">${user.buyer_deals || 0}</div>
-                            <div class="text-sm text-gray-400">💰 Покупок</div>
+                        <div class="glass-card" style="padding: 16px; text-align: center;">
+                            <div style="font-size: 28px; font-weight: bold; color: #8b5cf6;">${u.buyer_deals || 0}</div>
+                            <div class="text-secondary">💰 Покупок</div>
                         </div>
                     </div>
                     
-                    <button onclick="window.navigate('orders')" class="glass-card w-full p-4 flex items-center justify-between">
-                        <span><i class="fas fa-truck text-blue-500 mr-2"></i> Мои сделки</span>
-                        <span class="text-gray-400">${state.myOrders.length} <i class="fas fa-chevron-right"></i></span>
+                    <button onclick="window.navigate('orders')" class="glass-card" style="width: 100%; padding: 16px; display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span>📋 Мои сделки</span>
+                        <span class="text-secondary">${state.myOrders.length} →</span>
                     </button>
                     
-                    <button onclick="window.navigate('create')" class="neon-btn w-full py-4 text-lg">
-                        <i class="fas fa-plus mr-2"></i>Продать товар
-                    </button>
+                    <button onclick="window.navigate('create')" class="btn-neon" style="width: 100%;">➕ Продать товар</button>
                 </div>
             `;
         }
         
-        function OrdersView() {
+        function renderOrders() {
             if (state.myOrders.length === 0) {
                 return `
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <button onclick="window.navigate('profile')" class="glass p-2 rounded-full w-10 h-10 flex items-center justify-center">
-                                <i class="fas fa-arrow-left"></i>
-                            </button>
-                            <h2 class="text-2xl font-bold gradient-text ml-4">Мои сделки</h2>
+                    <div class="animate-in">
+                        <div class="flex-between" style="margin-bottom: 20px;">
+                            <button onclick="window.navigate('profile')" class="btn-outline" style="padding: 8px 16px;">← Назад</button>
+                            <h2 class="text-gradient">Мои сделки</h2>
+                            <div style="width: 40px;"></div>
                         </div>
-                        <div class="glass-card text-center py-16">
-                            <i class="fas fa-inbox text-5xl text-gray-600 mb-4"></i>
-                            <p class="text-gray-400">Нет активных сделок</p>
+                        <div class="glass-card" style="padding: 48px; text-align: center;">
+                            <div style="font-size: 48px;">📭</div>
+                            <p class="text-secondary">Нет активных сделок</p>
                         </div>
                     </div>
                 `;
             }
             
             return `
-                <div class="space-y-4">
-                    <div class="flex items-center">
-                        <button onclick="window.navigate('profile')" class="glass p-2 rounded-full w-10 h-10 flex items-center justify-center">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <h2 class="text-2xl font-bold gradient-text ml-4">Мои сделки</h2>
-                        <button onclick="window.loadMyOrders()" class="ml-auto glass p-2 rounded-full w-10 h-10">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
+                <div class="animate-in">
+                    <div class="flex-between" style="margin-bottom: 20px;">
+                        <button onclick="window.navigate('profile')" class="btn-outline" style="padding: 8px 16px;">← Назад</button>
+                        <h2 class="text-gradient">Мои сделки</h2>
+                        <button onclick="window.loadMyOrders()" class="btn-outline" style="padding: 8px 12px;">🔄</button>
                     </div>
                     
                     ${state.myOrders.map(order => `
-                        <div class="glass-card p-4">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="font-bold">${order.item_name}</span>
-                                <span class="text-xs px-2 py-1 rounded-full glass ${order.status === 'completed' ? 'text-green-500' : 'text-yellow-500'}">
+                        <div class="glass-card" style="padding: 16px; margin-bottom: 12px;">
+                            <div class="flex-between" style="margin-bottom: 8px;">
+                                <span style="font-weight: 600;">${order.item_name}</span>
+                                <span class="status-badge ${order.status === 'completed' ? 'status-completed' : 'status-pending'}">
                                     ${order.status === 'pending' ? '⏳ Ожидает' : order.status === 'completed' ? '✅ Завершено' : '❌ Отменено'}
                                 </span>
                             </div>
-                            <div class="text-sm text-gray-400 mb-2">
+                            <div class="text-secondary" style="font-size: 14px; margin-bottom: 8px;">
                                 ${order.is_buyer ? 'Вы покупаете у' : 'Вы продаёте'} @${order.other_user}
                             </div>
-                            <div class="text-2xl font-bold gradient-text">${order.price?.toLocaleString() || 0}💰</div>
+                            <div style="font-size: 20px; font-weight: bold; color: var(--accent); margin-bottom: 12px;">${order.price?.toLocaleString() || 0} 💰</div>
                             ${order.status === 'pending' && order.is_buyer ? `
-                                <button onclick="window.confirmOrder('${order.order_id}')" class="neon-btn w-full mt-3 py-2">
-                                    <i class="fas fa-check mr-2"></i>Подтвердить получение
-                                </button>
+                                <button onclick="window.confirmOrder('${order.order_id}')" class="btn-neon" style="width: 100%; padding: 12px;">✅ Подтвердить получение</button>
                             ` : ''}
                         </div>
                     `).join('')}
@@ -788,59 +777,44 @@
             `;
         }
         
-        function CreateItemView() {
+        function renderCreateForm() {
+            const categories = [
+                {id:'car',name:'🚗 Машина'},
+                {id:'house',name:'🏠 Дом'},
+                {id:'skin',name:'🎨 Скин'},
+                {id:'money',name:'💰 Валюта'},
+                {id:'accessory',name:'💎 Аксессуар'}
+            ];
+            
             return `
-                <div class="space-y-5">
-                    <div class="flex items-center">
-                        <button onclick="window.navigate('market')" class="glass p-2 rounded-full w-10 h-10 flex items-center justify-center">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <h2 class="text-2xl font-bold gradient-text ml-4">Новое объявление</h2>
+                <div class="animate-in">
+                    <div class="flex-between" style="margin-bottom: 20px;">
+                        <button onclick="window.navigate('market')" class="btn-outline" style="padding: 8px 16px;">← Назад</button>
+                        <h2 class="text-gradient">Новое объявление</h2>
+                        <div style="width: 40px;"></div>
                     </div>
                     
-                    <div class="glass-card p-5 space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300">Категория</label>
-                            <select id="itemCategory" class="w-full p-3 rounded-xl glass border-0 outline-none">
-                                <option value="car">🚗 Машина</option>
-                                <option value="house">🏠 Дом</option>
-                                <option value="skin">🎨 Скин</option>
-                                <option value="money">💰 Валюта</option>
-                                <option value="accessory">👔 Аксессуар</option>
-                            </select>
+                    <div class="glass-card" style="padding: 20px;">
+                        <select id="catSelect">
+                            ${categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                        </select>
+                        
+                        <input type="text" id="itemName" placeholder="Название товара" style="margin-top: 12px;">
+                        <textarea id="itemDesc" rows="3" placeholder="Описание товара"></textarea>
+                        <input type="number" id="itemPrice" placeholder="Цена">
+                        
+                        <div class="flex-between" style="margin: 12px 0;">
+                            <span>Возможность торга</span>
+                            <input type="checkbox" id="itemHaggle" checked style="width: 24px; height: 24px; margin: 0;">
                         </div>
                         
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300">Название</label>
-                            <input type="text" id="itemName" placeholder="Например: BMW M5 Competition" class="w-full p-3 rounded-xl glass border-0 outline-none">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300">Описание</label>
-                            <textarea id="itemDesc" rows="4" placeholder="Подробное описание товара..." class="w-full p-3 rounded-xl glass border-0 outline-none resize-none"></textarea>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300">Цена</label>
-                            <input type="number" id="itemPrice" placeholder="Сумма" class="w-full p-3 rounded-xl glass border-0 outline-none">
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm text-gray-300">Возможность торга</label>
-                            <div class="custom-checkbox" id="haggleCheckbox" onclick="this.classList.toggle('checked')">
-                                <i class="fas fa-check text-white text-xs" style="opacity: ${document.getElementById('haggleCheckbox')?.classList.contains('checked') ? 1 : 0}"></i>
-                            </div>
-                        </div>
-                        
-                        <button onclick="window.submitCreateItem()" class="neon-btn w-full py-4 text-lg mt-2">
-                            <i class="fas fa-rocket mr-2"></i>Опубликовать
-                        </button>
+                        <button onclick="window.submitCreate()" class="btn-neon" style="width: 100%; margin-top: 12px;">📢 Опубликовать</button>
                     </div>
                 </div>
             `;
         }
         
-        // Глобальные функции для on-click
+        // ========== ГЛОБАЛЬНЫЕ ФУНКЦИИ ==========
         window.navigate = (view) => {
             state.view = view;
             if (view === 'profile') loadProfile();
@@ -862,22 +836,14 @@
         };
         
         window.buyItem = buyItem;
-        window.confirmOrder = async (orderId) => {
-            const res = await callBot('confirm_order', { order_id: orderId });
-            if (res && res.success) {
-                showToast('Сделка завершена!', 'success');
-                await loadMyOrders();
-                render();
-            }
-        };
+        window.confirmOrder = confirmOrder;
         
-        window.submitCreateItem = () => {
-            const category = document.getElementById('itemCategory').value;
-            const name = document.getElementById('itemName').value;
-            const description = document.getElementById('itemDesc').value;
-            const price = parseInt(document.getElementById('itemPrice').value);
-            const haggleCheck = document.getElementById('haggleCheckbox');
-            const haggle = haggleCheck?.classList.contains('checked') || false;
+        window.submitCreate = () => {
+            const category = document.getElementById('catSelect')?.value || 'car';
+            const name = document.getElementById('itemName')?.value;
+            const desc = document.getElementById('itemDesc')?.value;
+            const price = parseInt(document.getElementById('itemPrice')?.value);
+            const haggle = document.getElementById('itemHaggle')?.checked || false;
             
             if (!name || !price) {
                 showToast('Заполните название и цену', 'error');
@@ -888,7 +854,7 @@
                 server_id: state.currentServer.id,
                 category: category,
                 name: name,
-                description: description,
+                description: desc,
                 price: price,
                 haggle: haggle
             });
@@ -897,34 +863,30 @@
         window.loadProfile = loadProfile;
         window.loadMyOrders = loadMyOrders;
         
-        // Инициализация
+        // ========== ОТРИСОВКА С ОБРАБОТЧИКАМИ ==========
         function render() {
             const views = {
-                servers: ServersView,
-                market: MarketView,
-                profile: ProfileView,
-                orders: OrdersView,
-                create: CreateItemView
+                servers: renderServers,
+                market: renderMarket,
+                profile: renderProfile,
+                orders: renderOrders,
+                create: renderCreateForm
             };
             
-            const content = views[state.view] ? views[state.view]() : ServersView();
-            document.getElementById('root').innerHTML = content;
+            const content = views[state.view] ? views[state.view]() : renderServers();
+            document.getElementById('app').innerHTML = content;
             
-            // Добавляем обработчики для серверов
             if (state.view === 'servers') {
                 document.querySelectorAll('.server-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        const id = parseInt(card.dataset.serverId);
+                    card.addEventListener('click', () => {
+                        const id = parseInt(card.dataset.id);
                         window.selectServer(id);
                     });
                 });
             }
-            
-            // Анимация появления
-            gsap.fromTo('.animate-item', { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.05, duration: 0.4 });
         }
         
-        // Запуск
+        // ========== ЗАПУСК ==========
         loadProfile();
         loadMyOrders();
         render();
