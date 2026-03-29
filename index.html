@@ -3,592 +3,650 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TradeMarket — Dark Premium Plates iOS 26</title>
+    <title>TradeMarket — Dark Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            /* Динамический цвет (меняется при выборе сервера) */
-            --active-color: #0A84FF; 
-            
-            --bg-deep: #050507;
+            --bg-deep: #141414;
+            --glass-base: rgba(255, 255, 255, 0.085);
+            --glass-border: rgba(255, 255, 255, 0.13);
+            --accent-pink: #FF2D55;
             --text-main: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.45);
-            
-            /* Рельефное стекло + динамическое переливание */
-            --glass-base: rgba(18, 18, 22, 0.5);
-            --glass-blur: blur(40px) saturate(200%);
-            
-            --relief-shadow: 
-                15px 15px 35px rgba(0, 0, 0, 0.8), 
-                -5px -5px 15px rgba(255, 255, 255, 0.02),
-                inset 1px 1px 2px rgba(255, 255, 255, 0.1),
-                inset -1px -1px 4px rgba(0, 0, 0, 0.7);
-                
-            --relief-shadow-active: 
-                inset 4px 4px 10px rgba(0, 0, 0, 0.9),
-                inset -2px -2px 5px rgba(255, 255, 255, 0.05);
-
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            
+            --text-muted: rgba(255, 255, 255, 0.68);
+            --radius-md: 20px;
             --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
         }
 
         body {
-            background-color: var(--bg-deep); color: var(--text-main);
-            min-height: 100vh; overflow-x: hidden;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Фоновые эффекты: Шум + Цветные Ауры */
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999;
-            pointer-events: none; opacity: 0.04; mix-blend-mode: overlay;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        .glass-relief {
+            background: var(--glass-base);
+            backdrop-filter: blur(32px) saturate(180%);
+            -webkit-backdrop-filter: blur(32px) saturate(180%);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
         }
 
-        .dark-aurora {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--active-color) 15%, transparent) 0%, transparent 60%),
-                        radial-gradient(circle at 10% 100%, rgba(94, 92, 230, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 90% 100%, color-mix(in srgb, var(--active-color) 10%, transparent) 0%, transparent 50%);
-            transition: background 0.8s ease;
+        /* Блик только для карточек, НЕ для серверов */
+        .glass-relief:not(.server-plate):not(.no-shine)::after {
+            content: '';
+            position: absolute;
+            inset: -80% -200% -80% -200%;
+            background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.28) 48%, rgba(255,255,255,0.28) 52%, transparent 65%);
+            transform: skewX(-18deg);
+            animation: liquidShine 7s linear infinite;
+            pointer-events: none;
+            opacity: 0.15;
+            z-index: 1;
+        }
+
+        @keyframes liquidShine {
+            0% { transform: translateX(-140%) skewX(-18deg); }
+            100% { transform: translateX(240%) skewX(-18deg); }
         }
 
         .container {
-            max-width: 600px; margin: 0 auto; padding: 24px 16px 140px 16px; min-height: 100vh;
-            position: relative; z-index: 1;
-            overflow: visible;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 16px 180px 16px;
+            min-height: 100vh;
         }
 
-        /* БАЗОВЫЙ КЛАСС СТЕКЛА + АНИМАЦИЯ ПЕРЕЛИВАНИЯ РЕЛЬЕФА */
-        .glass-relief {
-            background: var(--glass-base);
-            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--relief-shadow);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            position: relative; overflow: hidden;
-            transition: box-shadow 0.4s var(--spring);
-        }
-        .glass-relief::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            opacity: 0.5;
-        }
-        /* ДИНАМИЧЕСКОЕ ПЕРЕЛИВАНИЕ СТЕКЛА (shine sweep) */
-        .glass-relief::after {
-            content: '';
-            position: absolute;
-            inset: -50% -150% -50% -150%;
-            background: linear-gradient(100deg, transparent, rgba(255,255,255,0.28), transparent);
-            transform: skewX(-25deg);
-            animation: glassShine 7s linear infinite;
-            pointer-events: none;
-            z-index: 2;
-            opacity: 0.13;
-            mix-blend-mode: overlay;
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
         }
 
-        /* ---------------------------------------------------
-           ИСПРАВЛЕНИЕ: ТАБЫ — ТЕНИ БОЛЬШЕ НЕ ОБРЕЗАЮТСЯ
-           --------------------------------------------------- */
-        .tabs-scroll-wrapper {
-            margin: 0 -16px;
-            padding: 20px 20px 72px 20px; /* Увеличено для полноценной тени + glow tab-item.active */
-            margin-bottom: -52px;
-            overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+        /* ==================== СЕРВЕРЫ ==================== */
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
-        .tabs-scroll-wrapper::-webkit-scrollbar { display: none; }
-        
-        .segmented-tabs { display: inline-flex; gap: 12px; width: max-content; }
-        
-        .tab-item {
-            padding: 12px 22px; font-size: 15px; font-weight: 700; border-radius: 20px;
-            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05);
-            color: var(--text-muted); cursor: pointer; white-space: nowrap;
-            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); 
-            transition: all 0.3s var(--spring);
-            position: relative; overflow: hidden;
-        }
-        .tab-item.active {
-            background: var(--active-color); color: #fff; border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 12px 30px color-mix(in srgb, var(--active-color) 65%, transparent),
-                        inset 1px 1px 3px rgba(255,255,255,0.5);
-        }
-        /* Лёгкое переливание и на табах */
-        .tab-item::after {
-            content: '';
-            position: absolute;
-            inset: -50% -150% -50% -150%;
-            background: linear-gradient(100deg, transparent, rgba(255,255,255,0.25), transparent);
-            transform: skewX(-25deg);
-            animation: glassShine 9s linear infinite;
-            pointer-events: none;
-            opacity: 0.08;
-            z-index: 1;
-        }
-        .tab-item.active::after { opacity: 0.22; animation-duration: 3s; }
 
-        /* ---------------------------------------------------
-           СЕРВЕРЫ: ПРЯМОУГОЛЬНЫЕ ПЛАШКИ + ЗУМ В ЦЕНТРЕ + ПЕРЕЛИВАНИЕ
-           --------------------------------------------------- */
-        .servers-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 14px; 
-        }
-        
         .server-plate {
-            position: relative;
-            background: rgba(20, 20, 25, 0.5);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
-            border-bottom: 1px solid color-mix(in srgb, var(--srv-color) 30%, transparent);
+            padding: 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: var(--radius-md);
-            padding: 18px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 -2px 15px color-mix(in srgb, var(--srv-color) 10%, transparent);
-            cursor: pointer; overflow: hidden;
-            transition: all 0.3s var(--spring);
-            transform: scale(1); /* для зума */
-        }
-        /* Переливание рельефа на серверах */
-        .server-plate::before {
-            content: '';
-            position: absolute;
-            inset: -50% -150% -50% -150%;
-            background: linear-gradient(100deg, transparent, rgba(255,255,255,0.28), transparent);
-            transform: skewX(-25deg);
-            animation: glassShine 6s linear infinite;
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0.16;
-        }
-        .server-plate::after {
-            content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 100%;
-            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--srv-color) 15%, transparent));
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .server-plate-name {
-            font-size: 15px; font-weight: 800; color: #fff;
-            letter-spacing: 0.5px; z-index: 3;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
-        }
-
-        .server-dot {
-            width: 12px; height: 12px; border-radius: 50%;
-            background: var(--srv-color);
-            box-shadow: 0 0 12px var(--srv-color), 0 0 24px var(--srv-color), inset 1px 1px 2px rgba(255,255,255,0.8);
-            z-index: 3;
-            animation: neonPulse 2.8s ease-in-out infinite;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: all 0.25s var(--spring);
         }
 
         .server-plate:active {
-            transform: scale(0.93);
-            box-shadow: var(--relief-shadow-active), 0 0 15px color-mix(in srgb, var(--srv-color) 30%, transparent);
-            border-top-color: rgba(255, 255, 255, 0.05);
+            transform: scale(0.95);
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--srv-color) 45%, transparent);
         }
 
-        /* 3D Кнопки с улучшенным переливанием */
-        .btn-3d {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 100%; padding: 18px 24px; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;
-            border-radius: var(--radius-md); border: none; cursor: pointer; color: #fff;
-            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.4));
-            box-shadow: 0 10px 25px color-mix(in srgb, var(--active-color) 40%, transparent), inset 1px 1px 2px rgba(255,255,255,0.3), inset -1px -1px 4px rgba(0,0,0,0.5);
-            border: 1px solid color-mix(in srgb, var(--active-color) 50%, transparent);
-            position: relative; overflow: hidden; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        .btn-3d::after {
-            content: '';
-            position: absolute;
-            inset: -50% -150% -50% -150%;
-            background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
-            transform: skewX(-25deg);
-            animation: glassShine 8s linear infinite;
-            pointer-events: none;
-            opacity: 0.12;
-            z-index: 2;
-        }
-        .btn-3d:active {
-            transform: scale(0.94) translateY(2px);
-            box-shadow: var(--relief-shadow-active), 0 0 15px color-mix(in srgb, var(--active-color) 60%, transparent);
-        }
-        .btn-3d:active::after {
-            animation-duration: 1.2s;
-            opacity: 0.35;
+        .server-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
         }
 
-        .btn-icon {
-            width: 48px; height: 48px; border-radius: 50%;
+        .server-plate-name {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+        }
+
+        .server-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--srv-color);
+            box-shadow: 0 0 12px 2px var(--srv-color);
+        }
+
+        .server-stats {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ==================== ИНПУТЫ И ФОРМЫ ==================== */
+        .input-dark {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            color: white;
+            border-radius: 16px;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 12px;
+            transition: border-color 0.3s;
+        }
+        .input-dark:focus {
+            border-color: var(--accent-pink);
+        }
+
+        select.input-dark {
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        /* ==================== РАНГИ И БЕЙДЖИ ==================== */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-legend { background: linear-gradient(135deg, #FFD700, #FBA500); color: #000; }
+        .badge-pro { background: linear-gradient(135deg, #0A84FF, #005BBB); color: #fff; }
+        .badge-dealer { background: linear-gradient(135deg, #34C759, #248A3D); color: #fff; }
+
+        /* ==================== УМНЫЙ ТОРГ ==================== */
+        .bid-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .bid-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .bid-btn:active { background: var(--accent-pink); border-color: var(--accent-pink); }
+
+        /* ==================== FAB КНОПКА ==================== */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 62px;
+            height: 62px;
+            background: rgba(255, 45, 85, 0.9);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 10px 25px color-mix(in srgb, var(--accent-pink) 50%, transparent);
+            z-index: 300;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fab.hidden { opacity: 0; transform: scale(0.7) translateY(40px); pointer-events: none; }
+
+        /* ==================== КАРТОЧКИ ОБЪЯВЛЕНИЙ ==================== */
+        .market-card {
+            margin-bottom: 20px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .market-card:active { transform: scale(0.97); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(90deg, #fff, #ddd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-enter { animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ==================== МОДАЛЬНЫЕ ОКНА ==================== */
+        .modal-overlay {
+            position: fixed; top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
             display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(145deg, rgba(40,40,45,0.8), rgba(15,15,20,0.8));
-            box-shadow: var(--relief-shadow); border: 1px solid rgba(255,255,255,0.05);
-            color: var(--active-color); cursor: pointer; transition: all 0.3s var(--spring);
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
         }
-        .btn-icon:active { transform: scale(0.85); box-shadow: var(--relief-shadow-active); }
-
-        .fab-container {
-            position: fixed; bottom: 30px; left: 16px; right: 16px;
-            display: flex; justify-content: center; z-index: 100; pointer-events: none;
+        .modal-content {
+            background: #1c1c1e;
+            width: 100%;
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
         }
-        .fab-btn {
-            pointer-events: auto; width: 100%; max-width: 400px;
-            background: var(--active-color); padding: 18px 32px; border-radius: 30px;
-            font-weight: 800; font-size: 16px; color: #fff;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 15px 35px color-mix(in srgb, var(--active-color) 60%, transparent), inset 2px 2px 5px rgba(255,255,255,0.4);
-            border: 1px solid rgba(255,255,255,0.2); animation: float-up 0.8s var(--spring) forwards; transition: all 0.3s var(--spring);
-        }
-        .fab-btn:active { transform: scale(0.9); box-shadow: 0 5px 15px color-mix(in srgb, var(--active-color) 40%, transparent); }
-
-        /* АНИМАЦИИ */
-        @keyframes glassShine {
-            0% { transform: translateX(-150%) skewX(-25deg); }
-            100% { transform: translateX(300%) skewX(-25deg); }
-        }
-        @keyframes neonPulse {
-            0%, 100% { box-shadow: 0 0 12px var(--srv-color), 0 0 24px var(--srv-color), inset 1px 1px 2px rgba(255,255,255,0.8); }
-            50% { box-shadow: 0 0 22px var(--srv-color), 0 0 44px var(--srv-color), inset 1px 1px 2px rgba(255,255,255,0.8); }
-        }
-        .page-enter { animation: zoom-fade-in 0.6s var(--spring) forwards; transform-origin: top center; }
-        @keyframes zoom-fade-in { 0% { opacity: 0; transform: scale(0.92) translateY(30px); filter: blur(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
-        .stagger-item { opacity: 0; animation: slide-in-right 0.5s var(--spring) forwards; }
-        @keyframes slide-in-right { 0% { opacity: 0; transform: translateX(30px) scale(0.95); } 100% { opacity: 1; transform: translateX(0) scale(1); } }
-        @keyframes float-up { 0% { opacity: 0; transform: translateY(50px) scale(0.8); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-
-        /* ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ */
-        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; position: relative; }
-        .header-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.5) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px color-mix(in srgb, var(--active-color) 30%, transparent); }
-
-        .market-card { padding: 20px; margin-bottom: 20px; cursor: pointer; }
-        .market-card:active { transform: scale(0.96); }
-        .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .card-badge { background: rgba(0,0,0,0.4); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--active-color); border: 1px solid color-mix(in srgb, var(--active-color) 30%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--active-color) 20%, transparent); }
-        .card-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
-        .card-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
-        .card-price { font-size: 26px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .buy-mini-btn { background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--active-color) 50%, transparent); color: var(--active-color); font-weight: 700; }
-
-        .input-group { margin-bottom: 20px; position: relative; }
-        .glass-input { width: 100%; padding: 20px; font-size: 16px; color: #fff; background: rgba(0,0,0,0.3); border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 2px 2px 8px rgba(0,0,0,0.6), inset -1px -1px 2px rgba(255,255,255,0.05); outline: none; transition: 0.3s; -webkit-appearance: none; }
-        .glass-input:focus { border-color: var(--active-color); background: rgba(0,0,0,0.5); box-shadow: inset 2px 2px 8px rgba(0,0,0,0.8), 0 0 15px color-mix(in srgb, var(--active-color) 30%, transparent); }
-
-        .toggle-ios { appearance: none; -webkit-appearance: none; width: 56px; height: 32px; background: rgba(0,0,0,0.4); border-radius: 30px; position: relative; cursor: pointer; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.6); outline: none; transition: 0.4s var(--spring); border: 1px solid rgba(255,255,255,0.05); }
-        .toggle-ios::after { content: ''; position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; background: #fff; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset -1px -1px 2px rgba(0,0,0,0.2); transition: 0.4s var(--spring); }
-        .toggle-ios:checked { background: var(--active-color); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--active-color) 50%, transparent); }
-        .toggle-ios:checked::after { transform: translateX(24px); }
-
-        .hologram-avatar { width: 130px; height: 130px; margin: 0 auto 24px; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; font-size: 50px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.6)); box-shadow: var(--relief-shadow), 0 0 30px color-mix(in srgb, var(--active-color) 30%, transparent); border: 2px solid rgba(255,255,255,0.1); }
-        .hologram-avatar::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; background: conic-gradient(from 0deg, transparent, var(--active-color), transparent 50%); animation: spin 4s linear infinite; z-index: -1; filter: blur(10px); opacity: 0.5; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .svg-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
     </style>
 </head>
 <body>
-    <div class="noise-overlay"></div>
-    <div class="dark-aurora"></div>
     <div id="app" class="container"></div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); tg.enableClosingConfirmation();
-        tg.setHeaderColor('#050507'); tg.setBackgroundColor('#050507');
-        
+        tg.expand();
+        tg.setHeaderColor('#141414');
+        tg.setBackgroundColor('#141414');
+
+        // Моковые данные
         const SERVERS = [
-            {id:1,name:"RED",color:"#FF3B30"},{id:2,name:"GREEN",color:"#34C759"},{id:3,name:"BLUE",color:"#0A84FF"},{id:4,name:"YELLOW",color:"#FFCC00"},{id:5,name:"ORANGE",color:"#FF9500"},{id:6,name:"PURPLE",color:"#AF52DE"},{id:7,name:"LIME",color:"#ccff00"},{id:8,name:"PINK",color:"#FF2D55"},{id:9,name:"CHERRY",color:"#AC3939"},{id:10,name:"BLACK",color:"#8E8E93"},{id:11,name:"INDIGO",color:"#5856D6"},{id:12,name:"WHITE",color:"#FFFFFF"},{id:13,name:"MAGENTA",color:"#C406C4"},{id:14,name:"CRIMSON",color:"#D9133B"},{id:15,name:"GOLD",color:"#F1B61F"},{id:16,name:"AZURE",color:"#3097FF"},{id:17,name:"PLATINUM",color:"#868480"},{id:18,name:"AQUA",color:"#0DEDED"},{id:19,name:"GRAY",color:"#C7C2C1"},{id:20,name:"ICE",color:"#B6F1FE"},{id:21,name:"CHILLI",color:"#FE2726"},{id:22,name:"CHOCO",color:"#BF835C"},{id:23,name:"MOSCOW",color:"#FF2B3B"},{id:24,name:"SPB",color:"#11A6FA"},{id:25,name:"UFA",color:"#FFBA08"},{id:26,name:"SOCHI",color:"#01AFD6"},{id:27,name:"KAZAN",color:"#007DB2"},{id:28,name:"SAMARA",color:"#82339D"},{id:29,name:"ROSTOV",color:"#FBB040"},{id:30,name:"ANAPA",color:"#24ACF8"},{id:31,name:"EKB",color:"#93F0A4"},{id:32,name:"KRASNODAR",color:"#A03429"},{id:33,name:"ARZAMAS",color:"#FFF72D"},{id:34,name:"NOVOSIB",color:"#99D53B"},{id:35,name:"GROZNY",color:"#009622"},{id:36,name:"SARATOV",color:"#0597EB"},{id:37,name:"OMSK",color:"#58E1A5"},{id:38,name:"IRKUTSK",color:"#06E1FF"},{id:39,name:"VOLGOGRAD",color:"#FE0000"},{id:40,name:"VORONEZH",color:"#FFF200"},{id:41,name:"BELGOROD",color:"#0039A6"},{id:42,name:"MAKHACHKALA",color:"#42AD42"},{id:43,name:"VLADIKAVKAZ",color:"#8EB0D9"},{id:44,name:"VLADIVOSTOK",color:"#3A95FF"},{id:45,name:"KALININGRAD",color:"#F0EBC9"},{id:46,name:"CHELYABINSK",color:"#FF6B00"},{id:47,name:"KRASNOYARSK",color:"#D99D1C"},{id:48,name:"CHEBOKSARY",color:"#6CBB74"},{id:49,name:"KHABAROVSK",color:"#0184C4"},{id:50,name:"PERM",color:"#FFD700"},{id:51,name:"TULA",color:"#F2B647"},{id:52,name:"RYAZAN",color:"#C659EB"},{id:53,name:"MURMANSK",color:"#396797"},{id:54,name:"PENZA",color:"#53E295"},{id:55,name:"KURSK",color:"#9E1C00"},{id:56,name:"ARKHANGELSK",color:"#FF007A"},{id:57,name:"ORENBURG",color:"#E39012"},{id:58,name:"KIROV",color:"#939393"},{id:59,name:"KEMEROVO",color:"#F61A1B"},{id:60,name:"TYUMEN",color:"#44C9F3"},{id:61,name:"TOLYATTI",color:"#8F00FF"},{id:62,name:"IVANOVO",color:"#D5AF80"},{id:63,name:"STAVROPOL",color:"#3F6BE9"},{id:64,name:"SMOLENSK",color:"#EE703E"},{id:65,name:"PSKOV",color:"#63A62E"},{id:66,name:"BRYANSK",color:"#26EEBE"},{id:67,name:"OREL",color:"#FFEA03"},{id:68,name:"YAROSLAVL",color:"#D01D0D"},{id:69,name:"BARNAUL",color:"#797CC7"},{id:70,name:"LIPETSK",color:"#CCD0DA"},{id:71,name:"ULYANOVSK",color:"#B55624"},{id:72,name:"YAKUTSK",color:"#44BFFC"},{id:73,name:"TAMBOV",color:"#959595"},{id:74,name:"BRATSK",color:"#e0c1a0"},{id:75,name:"ASTRAKHAN",color:"#F7243A"},{id:76,name:"CHITA",color:"#35CA68"},{id:77,name:"KOSTROMA",color:"#F1B10D"},{id:78,name:"VLADIMIR",color:"#F58041"},{id:79,name:"KALUGA",color:"#3032A4"},{id:80,name:"NOVGOROD",color:"#FFC700"},{id:81,name:"TAGANROG",color:"#984FCF"},{id:82,name:"VOLOGDA",color:"#F54141"},{id:83,name:"TVER",color:"#84B6FF"},{id:84,name:"TOMSK",color:"#00e9b2"},{id:85,name:"IZHEVSK",color:"#00A2A4"},{id:86,name:"SURGUT",color:"#4F27DE"},{id:87,name:"PODOLSK",color:"#B7A67E"},{id:88,name:"MAGADAN",color:"#B1C1C7"},{id:89,name:"CHEREPOVETS",color:"#3885E9"},{id:90,name:"NORILSK",color:"#AED4F6"}
+            {id:1,name:"RED",color:"#FF3B30"},{id:2,name:"GREEN",color:"#34C759"},{id:3,name:"BLUE",color:"#0A84FF"},
+            {id:4,name:"YELLOW",color:"#FFCC00"},{id:5,name:"ORANGE",color:"#FF9500"},{id:6,name:"PURPLE",color:"#AF52DE"},
+            {id:8,name:"PINK",color:"#FF2D55"},{id:10,name:"BLACK",color:"#8E8E93"},{id:23,name:"MOSCOW",color:"#FF2B3B"},
+            {id:24,name:"SPB",color:"#11A6FA"}
         ];
-        
-        let state = { view: 'servers', currentServer: null, user: null, items: [], myOrders: [], loading: false, currentCategory: 'all' };
-        
-        function callBot(action, data = {}) { return new Promise((resolve) => { const id = Date.now() + '_' + Math.random(); window[id] = resolve; tg.sendData(JSON.stringify({ action, ...data, _id: id })); setTimeout(() => { if (window[id]) { delete window[id]; resolve(null); } }, 10000); }); }
-        function showToast(msg, type = 'info') { tg.showPopup({ title: type === 'success' ? 'Успех' : type === 'error' ? 'Ошибка' : 'Инфо', message: msg, buttons: [{type: 'ok'}] }); }
-        
-        async function loadProfile() { const res = await callBot('get_profile'); if (res) state.user = res; }
-        async function loadItems() { if (!state.currentServer) return; state.loading = true; render(); const res = await callBot('get_items', { server_id: state.currentServer.id, category: state.currentCategory === 'all' ? null : state.currentCategory }); if (res) state.items = res; state.loading = false; render(); }
-        async function loadMyOrders() { const res = await callBot('my_orders'); if (res) state.myOrders = res; }
-        
-        async function createItem(data) { const res = await callBot('create_item', data); if (res?.success) { showToast('Готово!', 'success'); await loadItems(); state.view = 'market'; render(); } else { showToast('Ошибка: ' + (res?.error || 'Сбой'), 'error'); } }
-        async function buyItem(itemId) { tg.showConfirm(`Подтверждаете покупку?`, async (confirmed) => { if (confirmed) { const res = await callBot('buy_item', { item_id: itemId }); if (res?.success) { showToast('Сделка открыта!', 'success'); await loadMyOrders(); render(); } else { showToast('Ошибка: ' + (res?.error || 'Отмена'), 'error'); } } }); }
-        async function confirmOrder(orderId) { tg.showConfirm(`Завершить сделку?`, async (confirmed) => { if (confirmed) { const res = await callBot('confirm_order', { order_id: orderId }); if (res?.success) { showToast('Успешно!', 'success'); await loadMyOrders(); await loadProfile(); render(); } else { showToast('Сбой', 'error'); } } }); }
-        
-        function getRank(deals) { if (deals >= 50) return { name: 'VIP Legend', clr: '#FF2D55' }; if (deals >= 20) return { name: 'Master', clr: '#BF5AF2' }; if (deals >= 5) return { name: 'Trader', clr: '#0A84FF' }; return { name: 'Novice', clr: '#34C759' }; }
 
-        const iBack = `<svg class="svg-icon"><path d="M15 18l-6-6 6-6"/></svg>`;
-        const iAdd = `<svg class="svg-icon"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
-        const iProf = `<svg class="svg-icon"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+        const SAMPLE_ITEMS = [
+            {id:1, name:"BMW M5 F90", desc:"Полный тюнинг ФТ, прошивка спорт. Не бит не крашен.", price:4500000, seller:"@prodrift", deals: 112, avatar:"🚗", rating:4.9, bargain: true},
+            {id:2, name:"VIP Скин (Анонимно)", desc:"Продам редкий скин, сделка только через гаранта.", price:1250000, seller:"Анонимный продавец", deals: 45, avatar:"👤", rating:5.0, bargain: false},
+            {id:3, name:"Дом в Рублевке", desc:"3 этажа + гараж на 4 места. Оплачен на месяц.", price:15000000, seller:"@realestate", deals: 18, avatar:"🏠", rating:4.7, bargain: true},
+            {id:4, name:"Сим-карта 777777", desc:"Блатная симка, торг минимальный.", price:250000, seller:"@sim_boss", deals: 2, avatar:"📱", rating:4.0, bargain: true}
+        ];
 
-        /* ====================== ЭФФЕКТ ЗУМА СЕРВЕРОВ В ЦЕНТРЕ ====================== */
-        let zoomScrollHandler = null;
-
-        function updateServerZooms() {
-            if (state.view !== 'servers') return;
-            const plates = document.querySelectorAll('.server-plate');
-            if (!plates.length) return;
-
-            const viewportCenterY = window.innerHeight / 2;
-            const maxZoomDist = window.innerHeight * 0.48;
-
-            plates.forEach(plate => {
-                const rect = plate.getBoundingClientRect();
-                const plateCenterY = rect.top + rect.height / 2;
-                const distance = Math.abs(plateCenterY - viewportCenterY);
-                const zoomFactor = Math.max(0, 1 - (distance / maxZoomDist));
-                const scale = 1 + (0.16 * Math.pow(zoomFactor, 1.15));
-
-                plate.style.transition = 'transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                plate.style.transform = `scale(${scale.toFixed(3)})`;
-                plate.style.zIndex = Math.round(zoomFactor * 20);
-            });
-        }
-
-        const createZoomHandler = () => {
-            let rafPending = false;
-            return () => {
-                if (rafPending) return;
-                rafPending = true;
-                requestAnimationFrame(() => {
-                    updateServerZooms();
-                    rafPending = false;
-                });
-            };
+        let state = {
+            view: 'servers',
+            currentServer: null,
+            favorites: [3, 23],
+            searchQuery: '',
+            currentItem: null
         };
 
-        function renderServers() {
-            return `
-                <div class="page-enter">
-                    <div class="header">
-                        <div class="header-title">Выбор сервера</div>
-                        <div class="btn-icon" onclick="window.navigate('profile')">${iProf}</div>
-                    </div>
-                    
-                    <div class="servers-grid">
-                        ${SERVERS.map((s, i) => `
-                            <div class="server-plate stagger-item" style="--srv-color: ${s.color}; animation-delay: ${i * 0.013}s" 
-                                 onclick="window.selectServer(${s.id}, '${s.color}')">
-                                <span class="server-plate-name">${s.name}</span>
-                                <div class="server-dot"></div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
+        // Логика рангов
+        function getRank(deals) {
+            if(deals <= 5) return {name: "Новичок", class: "badge-dealer", color: "#8E8E93"};
+            if(deals <= 20) return {name: "Дилер", class: "badge-dealer", color: "#34C759"};
+            if(deals <= 50) return {name: "Профессионал", class: "badge-pro", color: "#0A84FF"};
+            if(deals <= 100) return {name: "Крестный Отец", class: "badge-pro", color: "#AF52DE"};
+            return {name: "Легенда", class: "badge-legend", color: "#FFD700"};
         }
-        
-        function renderMarket() {
-            const cats = [ {id:'all', n:'Всё'}, {id:'car', n:'Авто'}, {id:'house', n:'Дома'}, {id:'skin', n:'Скины'}, {id:'money', n:'Валюта'}, {id:'accessory', n:'Вещи'} ];
-            
-            return `
-                <div class="page-enter">
-                    <div class="header">
-                        <div class="btn-icon" onclick="window.navigate('servers')">${iBack}</div>
-                        <div class="header-title" style="color: var(--active-color); text-shadow: 0 0 20px color-mix(in srgb, var(--active-color) 50%, transparent);">${state.currentServer?.name}</div>
-                        <div class="btn-icon" onclick="window.navigate('profile')">${iProf}</div>
-                    </div>
-                    
-                    <div class="tabs-scroll-wrapper stagger-item">
-                        <div class="segmented-tabs">
-                            ${cats.map(cat => `
-                                <div class="tab-item ${state.currentCategory === cat.id ? 'active' : ''}" 
-                                     onclick="window.setCategory('${cat.id}')">${cat.n}</div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    ${state.loading ? `<div class="glass-relief" style="padding:40px; text-align:center;">Поиск данных...</div>` :
-                    state.items.length === 0 ? `
-                        <div class="glass-relief stagger-item" style="padding: 60px 20px; text-align:center; animation-delay: 0.1s;">
-                            <div style="font-size: 50px; opacity: 0.2; margin-bottom: 20px;">🕸</div>
-                            <h3 style="margin-bottom: 10px;">Рынок пуст</h3>
-                            <p style="color: var(--text-muted); font-size: 15px;">Станьте первым продавцом</p>
-                        </div>
-                    ` : state.items.map((item, i) => `
-                        <div class="glass-relief market-card stagger-item" style="animation-delay: ${(i % 10) * 0.05}s" onclick="window.buyItem('${item.item_id}')">
-                            <div class="card-top">
-                                <span class="card-badge">Рейтинг ${item.seller_rating || 0}</span>
-                            </div>
-                            <div class="card-title">${item.name}</div>
-                            <div class="card-desc">${item.description || 'Описание отсутствует'}</div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
-                                <div class="card-price">${(item.price || 0).toLocaleString()} ₽</div>
-                                <div class="buy-mini-btn">Купить</div>
-                            </div>
-                        </div>
-                    `).join('')}
 
-                    <div class="fab-container">
-                        <div class="fab-btn" onclick="window.navigate('create')">
-                            ${iAdd} Разместить объявление
-                        </div>
-                    </div>
-                </div>
-            `;
+        // Логика умного торга
+        function getBargainButtons(price) {
+            if (price <= 300000) return [{t:'-10k', v:10000}, {t:'-20k', v:20000}, {t:'-50k', v:50000}, {t:'Своя сумма', v:0}];
+            if (price <= 5000000) return [{t:'-50k', v:50000}, {t:'-100k', v:100000}, {t:'-200k', v:200000}, {t:'-500k', v:500000}];
+            return [{t:'-500k', v:500000}, {t:'-1 млн', v:1000000}, {t:'-2 млн', v:2000000}, {t:'Своя сумма', v:0}];
         }
-        
-        function renderProfile() {
-            const u = state.user || { first_name: 'Загрузка...', rating: 0, deals: 0 };
-            const rank = getRank(u.deals || 0);
+
+        // --- ЭКРАН 1: СЕРВЕРЫ ---
+        function renderServers() {
+            const filtered = SERVERS.filter(s => s.name.toLowerCase().includes(state.searchQuery.toLowerCase()));
             
             return `
                 <div class="page-enter">
                     <div class="header">
-                        <div class="btn-icon" onclick="window.navigate('servers')">${iBack}</div>
-                        <div class="header-title">Профиль</div>
-                        <div style="width:48px;"></div>
+                        <div style="font-size:28px;font-weight:800;">Серверы</div>
+                        <div onclick="window.navigate('profile')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;">👤</div>
                     </div>
-                    
-                    <div class="stagger-item">
-                        <div class="hologram-avatar">${u.first_name?.charAt(0) || '👤'}</div>
-                        <div style="text-align: center; margin-bottom: 40px;">
-                            <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">${u.first_name}</h2>
-                            <div style="display:inline-block; padding: 6px 16px; border-radius: 20px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: ${rank.clr}; font-weight: 800; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8);">${rank.name}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="display:flex; gap: 16px; margin-bottom: 24px;" class="stagger-item" style="animation-delay: 0.1s;">
-                        <div class="glass-relief" style="flex:1; padding: 24px; text-align:center;">
-                            <div style="font-size: 36px; font-weight: 900; margin-bottom: 8px; text-shadow: 0 0 20px rgba(255,255,255,0.3);">${u.rating || 0}</div>
-                            <div style="color: var(--text-muted); font-size: 13px; font-weight: 700; text-transform: uppercase;">Рейтинг</div>
-                        </div>
-                        <div class="glass-relief" style="flex:1; padding: 24px; text-align:center;">
-                            <div style="font-size: 36px; font-weight: 900; margin-bottom: 8px; text-shadow: 0 0 20px rgba(255,255,255,0.3);">${u.deals || 0}</div>
-                            <div style="color: var(--text-muted); font-size: 13px; font-weight: 700; text-transform: uppercase;">Сделок</div>
-                        </div>
-                    </div>
-                    
-                    <div class="glass-relief stagger-item" style="padding: 8px; margin-bottom: 16px; animation-delay: 0.2s;">
-                        <button class="btn-3d" style="background: transparent; box-shadow: none; border: none; justify-content: space-between;" onclick="window.navigate('orders')">
-                            <span>Моя история сделок</span>
-                            <span style="background: var(--active-color); padding: 4px 12px; border-radius: 12px; font-size: 14px; box-shadow: 0 0 10px var(--active-color);">${state.myOrders.length}</span>
-                        </button>
+
+                    <input type="text" class="input-dark" style="border-radius:9999px; padding-left:24px;" 
+                           placeholder="🔎 Поиск сервера..." value="${state.searchQuery}" oninput="window.updateSearch(this.value)">
+
+                    <div class="servers-grid" style="margin-top: 16px;">
+                        ${filtered.map((s, i) => {
+                            const mockOnline = 800 + (s.id * 13 % 200);
+                            const mockAds = 40 + (s.id * 7 % 100);
+                            const isFav = state.favorites.includes(s.id);
+                            
+                            return `
+                            <div class="server-plate" style="--srv-color:${s.color}; animation-delay:${i*0.02}s" 
+                                 onclick="window.selectServer(${s.id}, '${s.color}')">
+                                <div class="server-header">
+                                    <span class="server-plate-name">${isFav ? '⭐ ' : ''}${s.name}</span>
+                                    <div class="server-dot"></div>
+                                </div>
+                                <div class="server-stats">
+                                    <span>👥 ${mockOnline}</span>
+                                    <span>📦 ${mockAds}</span>
+                                </div>
+                            </div>
+                        `}).join('')}
                     </div>
                 </div>
             `;
         }
-        
-        function renderOrders() {
+
+        // --- ЭКРАН 2: РЫНОК СЕРВЕРА ---
+        function renderMarket() {
+            const filteredItems = SAMPLE_ITEMS.filter(item => 
+                item.name.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
+                item.seller.toLowerCase().includes(state.searchQuery.toLowerCase())
+            );
+
             return `
                 <div class="page-enter">
                     <div class="header">
-                        <div class="btn-icon" onclick="window.navigate('profile')">${iBack}</div>
-                        <div class="header-title">Сделки</div>
-                        <div style="width:48px;"></div>
+                        <div onclick="window.navigate('servers')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">←</div>
+                        <div style="font-size:24px;font-weight:800;color:var(--accent-pink)">${state.currentServer.name} MARKET</div>
+                        <div style="width:44px;"></div>
                     </div>
-                    
-                    ${state.myOrders.length === 0 ? `
-                        <div class="glass-relief stagger-item" style="padding: 40px; text-align:center;">Пусто</div>
-                    ` : state.myOrders.map((order, i) => `
-                        <div class="glass-relief market-card stagger-item" style="animation-delay: ${i * 0.1}s; cursor: default;">
-                            <div class="card-top">
-                                <span class="card-badge" style="color: ${order.status === 'completed' ? '#34C759' : '#FF9500'}; border-color: ${order.status === 'completed' ? '#34C759' : '#FF9500'};">
-                                    ${order.status === 'pending' ? 'Ожидание' : 'Выполнено'}
-                                </span>
+
+                    <input type="text" class="input-dark" style="border-radius:9999px; padding-left:24px; margin-bottom: 24px;" 
+                           placeholder="🔎 Поиск лота или @nick..." value="${state.searchQuery}" oninput="window.updateSearch(this.value)">
+
+                    <div class="fab" id="fab" onclick="window.navigate('create')">+</div>
+
+                    ${filteredItems.map(item => {
+                        const rank = getRank(item.deals);
+                        return `
+                        <div class="glass-relief market-card" onclick="window.openItem(${item.id})">
+                            <div class="card-header">
+                                <div class="avatar">${item.avatar}</div>
+                                <div>
+                                    <div style="font-weight:700; display:flex; gap:6px; align-items:center;">
+                                        ${item.seller} <span style="font-size:12px;color:#34C759;">⭐ ${item.rating}</span>
+                                    </div>
+                                    <div style="margin-top:4px;"><span class="badge ${rank.class}">${rank.name}</span></div>
+                                </div>
                             </div>
-                            <div class="card-title">${order.item_name}</div>
-                            <div class="card-desc">Контрагент: @${order.other_user}</div>
-                            <div class="card-price" style="margin-bottom: 20px;">${(order.price || 0).toLocaleString()} ₽</div>
-                            ${order.status === 'pending' && order.is_buyer ? `
-                                <button class="btn-3d" onclick="window.confirmOrder('${order.order_id}')">Подтвердить получение</button>
-                            ` : ''}
+                            <div style="font-size:20px;font-weight:800;margin-bottom:6px;">${item.name}</div>
+                            <div style="color:var(--text-muted);font-size:14px;margin-bottom:16px;">${item.desc.substring(0,40)}...</div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <div class="price">${item.price.toLocaleString('ru-RU')} ₽</div>
+                                <div style="background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:9999px;font-weight:700;font-size:14px;">Подробнее</div>
+                            </div>
                         </div>
-                    `).join('')}
+                    `}).join('')}
                 </div>
             `;
         }
-        
+
+        // --- ЭКРАН 3: КАРТОЧКА ЛОТА (С УМНЫМ ТОРГОМ) ---
+        function renderItemView() {
+            const item = state.currentItem;
+            const rank = getRank(item.deals);
+            const bargainBtns = item.bargain ? getBargainButtons(item.price) : [];
+
+            return `
+                <div class="page-enter">
+                    <div class="header">
+                        <div onclick="window.navigate('market')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">←</div>
+                        <div style="font-size:20px;font-weight:800;">Объявление</div>
+                        <div style="width:44px;"></div>
+                    </div>
+
+                    <div class="glass-relief no-shine" style="padding:24px;">
+                        <div style="display:flex; gap:16px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:16px; margin-bottom:16px;">
+                            <div class="avatar" style="width:60px;height:60px;font-size:30px;">${item.avatar}</div>
+                            <div>
+                                <div style="font-size:18px;font-weight:800;">${item.seller}</div>
+                                <div style="font-size:14px;color:var(--text-muted);margin:4px 0;">Сделок: ${item.deals} • ⭐ ${item.rating}</div>
+                                <span class="badge ${rank.class}">${rank.name}</span>
+                            </div>
+                        </div>
+
+                        <h2 style="font-size:24px;font-weight:800;margin-bottom:8px;">${item.name}</h2>
+                        <p style="color:var(--text-muted);font-size:15px;line-height:1.5;margin-bottom:24px;">${item.desc}</p>
+                        
+                        <div style="font-size:14px;color:var(--text-muted);margin-bottom:4px;">Цена:</div>
+                        <div class="price" style="font-size:32px;margin-bottom:24px;">${item.price.toLocaleString('ru-RU')} ₽</div>
+
+                        <div onclick="window.startDeal()" style="background:var(--accent-pink);color:white;padding:16px;text-align:center;border-radius:16px;font-weight:800;font-size:16px;margin-bottom:16px;cursor:pointer;">
+                            🤝 Купить через Гаранта
+                        </div>
+
+                        ${item.bargain ? `
+                            <div style="background:rgba(0,0,0,0.2); border-radius:16px; padding:16px;">
+                                <div style="font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between;">
+                                    <span>Торг уместен</span>
+                                    <span style="color:var(--text-muted);font-size:12px;font-weight:normal;">КД: 30 мин</span>
+                                </div>
+                                <div class="bid-grid">
+                                    ${bargainBtns.map(b => `<div class="bid-btn" onclick="window.sendBid('${b.t}')">${b.t}</div>`).join('')}
+                                </div>
+                            </div>
+                        ` : `
+                            <div style="text-align:center; color:var(--text-muted); font-size:14px; padding:12px; background:rgba(0,0,0,0.2); border-radius:16px;">
+                                🔒 Продавец отключил торг
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- ЭКРАН 4: СОЗДАНИЕ ОБЪЯВЛЕНИЯ ---
         function renderCreateForm() {
             return `
                 <div class="page-enter">
                     <div class="header">
-                        <div class="btn-icon" onclick="window.navigate('market')">${iBack}</div>
-                        <div class="header-title">Продажа</div>
-                        <div style="width:48px;"></div>
+                        <div onclick="window.navigate('market')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">←</div>
+                        <div style="font-size:22px;font-weight:800;">Новый лот</div>
+                        <div style="width:44px;"></div>
                     </div>
-                    
-                    <div class="glass-relief stagger-item" style="padding: 24px;">
-                        <div class="input-group">
-                            <select id="catSelect" class="glass-input">
-                                <option value="car">Машина</option><option value="house">Дом</option><option value="skin">Скин</option>
-                                <option value="money">Валюта</option><option value="accessory">Аксессуар</option>
-                            </select>
+
+                    <div class="glass-relief no-shine" style="padding:20px;">
+                        <label style="display:block;margin-bottom:8px;font-size:14px;font-weight:700;color:var(--text-muted);">Название предмета</label>
+                        <input type="text" class="input-dark" placeholder="Например: BMW M5 F90">
+
+                        <label style="display:block;margin-bottom:8px;font-size:14px;font-weight:700;color:var(--text-muted);">Цена (вирты)</label>
+                        <input type="number" class="input-dark" placeholder="5000000">
+
+                        <label style="display:block;margin-bottom:8px;font-size:14px;font-weight:700;color:var(--text-muted);">Способ связи</label>
+                        <select class="input-dark">
+                            <option>Публично (Мой @username)</option>
+                            <option>Анонимно (Только чат-бот гарант)</option>
+                        </select>
+
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0;padding:16px;background:rgba(0,0,0,0.2);border-radius:16px;">
+                            <span style="font-weight:700;">Разрешить торг</span>
+                            <input type="checkbox" checked style="width:24px;height:24px;accent-color:var(--accent-pink);">
                         </div>
-                        <div class="input-group">
-                            <input type="text" id="itemName" class="glass-input" placeholder="Название товара (например, BMW M5)">
+
+                        <div onclick="window.publishAd()" style="background:var(--accent-pink);color:white;padding:18px;text-align:center;border-radius:16px;font-weight:800;font-size:16px;margin-top:10px;cursor:pointer;">
+                            Опубликовать
                         </div>
-                        <div class="input-group">
-                            <textarea id="itemDesc" class="glass-input" rows="3" placeholder="Описание характеристик..."></textarea>
-                        </div>
-                        <div class="input-group">
-                            <input type="number" id="itemPrice" class="glass-input" placeholder="Стоимость (₽)">
-                        </div>
-                        
-                        <div class="glass-relief" style="display:flex; justify-content:space-between; align-items:center; padding: 20px; margin-bottom: 24px;">
-                            <span style="font-weight: 700; font-size: 16px;">Доступен торг</span>
-                            <input type="checkbox" id="itemHaggle" class="toggle-ios" checked>
-                        </div>
-                        
-                        <button class="btn-3d" onclick="window.submitCreate()">Опубликовать лот</button>
                     </div>
                 </div>
             `;
         }
-        
-        window.navigate = async (view) => { 
-            state.view = view; 
-            if (view === 'profile') { await loadProfile(); await loadMyOrders(); } 
-            if (view === 'orders') await loadMyOrders(); 
-            if (view === 'market' && state.currentServer) await loadItems(); 
-            render(); 
-        };
-        window.selectServer = (id, color) => { state.currentServer = SERVERS.find(s => s.id === id); document.documentElement.style.setProperty('--active-color', color); navigate('market'); };
-        window.setCategory = (cat) => { state.currentCategory = cat; loadItems(); };
-        window.buyItem = buyItem; window.confirmOrder = confirmOrder;
-        window.submitCreate = () => { 
-            const data = { 
-                server_id: state.currentServer.id, 
-                category: document.getElementById('catSelect')?.value, 
-                name: document.getElementById('itemName')?.value, 
-                description: document.getElementById('itemDesc')?.value, 
-                price: parseInt(document.getElementById('itemPrice')?.value), 
-                haggle: document.getElementById('itemHaggle')?.checked || false 
-            }; 
-            if (!data.name || !data.price) { showToast('Заполните название и цену', 'error'); return; } 
-            createItem(data); 
-        };
-        
-        function render() { 
-            const views = { servers: renderServers, market: renderMarket, profile: renderProfile, orders: renderOrders, create: renderCreateForm }; 
-            document.getElementById('app').innerHTML = (views[state.view] || renderServers)(); 
-            
-            /* Пост-рендер эффекты */
-            if (state.view === 'servers') {
-                setTimeout(() => {
-                    if (zoomScrollHandler) window.removeEventListener('scroll', zoomScrollHandler, { passive: true });
-                    zoomScrollHandler = createZoomHandler();
-                    window.addEventListener('scroll', zoomScrollHandler, { passive: true });
-                    updateServerZooms();
-                }, 120);
-            } else if (zoomScrollHandler) {
-                window.removeEventListener('scroll', zoomScrollHandler, { passive: true });
-                zoomScrollHandler = null;
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+
+        // --- ЭКРАН 5: ПРОФИЛЬ ---
+        function renderProfile() {
+            const myRank = getRank(65); // Хардкод для демо: 65 сделок = Крестный Отец
+
+            return `
+                <div class="page-enter">
+                    <div class="header">
+                        <div onclick="window.navigate('servers')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;">←</div>
+                        <div style="font-size:24px;font-weight:800;">Профиль</div>
+                        <div style="width:44px;"></div>
+                    </div>
+
+                    <div class="glass-relief no-shine" style="padding:32px 20px;text-align:center;margin-bottom:20px;">
+                        <div style="font-size:70px;margin-bottom:16px;line-height:1;">😎</div>
+                        <h2 style="font-size:28px;font-weight:800;margin-bottom:8px;">Твой Никнейм</h2>
+                        <div style="margin-bottom:16px;"><span class="badge ${myRank.class}" style="font-size:14px;padding:6px 14px;">${myRank.name}</span></div>
+                        
+                        <div style="display:flex;justify-content:space-around;background:rgba(0,0,0,0.2);padding:16px;border-radius:16px;">
+                            <div>
+                                <div style="font-size:20px;font-weight:800;">65</div>
+                                <div style="font-size:12px;color:var(--text-muted);">Сделок</div>
+                            </div>
+                            <div>
+                                <div style="font-size:20px;font-weight:800;color:#34C759;">4.9</div>
+                                <div style="font-size:12px;color:var(--text-muted);">Рейтинг</div>
+                            </div>
+                            <div>
+                                <div style="font-size:20px;font-weight:800;">3</div>
+                                <div style="font-size:12px;color:var(--text-muted);">В продаже</div>
+                            </div>
+                        </div>
+
+                        <!-- Прогресс бар ранга -->
+                        <div style="margin-top:20px;text-align:left;">
+                            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                <span>Прогресс до "Легенда"</span>
+                                <span>65 / 100</span>
+                            </div>
+                            <div style="width:100%;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
+                                <div style="width:65%;height:100%;background:var(--accent-pink);border-radius:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size:18px;font-weight:800;margin-bottom:12px;padding-left:8px;">Последние отзывы</h3>
+                    <div class="glass-relief no-shine" style="padding:16px;">
+                        <div style="border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                                <span style="font-weight:700;">@buyer_one</span>
+                                <span style="color:#34C759;">⭐⭐⭐⭐⭐</span>
+                            </div>
+                            <div style="font-size:14px;color:var(--text-muted);">Все быстро и четко, перевел первым.</div>
+                        </div>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                                <span style="font-weight:700;">Аноним</span>
+                                <span style="color:#34C759;">⭐⭐⭐⭐</span>
+                            </div>
+                            <div style="font-size:14px;color:var(--text-muted);">Норм продавец, сделка через бота прошла ок.</div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
-        
-        loadProfile().then(render);
+
+        // --- НАВИГАЦИЯ И ДЕЙСТВИЯ ---
+        window.navigate = (view) => {
+            state.searchQuery = ''; // сброс поиска при переходах
+            state.view = view;
+            render();
+            window.scrollTo(0,0);
+        };
+
+        window.selectServer = (id, color) => {
+            state.currentServer = SERVERS.find(s => s.id === id);
+            document.documentElement.style.setProperty('--accent-pink', color);
+            navigate('market');
+        };
+
+        window.updateSearch = (val) => {
+            state.searchQuery = val;
+            render();
+        };
+
+        window.openItem = (id) => {
+            state.currentItem = SAMPLE_ITEMS.find(i => i.id === id);
+            navigate('item');
+        };
+
+        window.startDeal = () => {
+            tg.showConfirm("Бот создаст приватный чат для сделки между тобой и продавцом. Продолжить?", (confirmed) => {
+                if (confirmed) tg.showAlert("Чат успешно создан! Проверьте личные сообщения с ботом.");
+            });
+        };
+
+        window.sendBid = (amount) => {
+            tg.showAlert(`Предложение «${amount}» отправлено продавцу.\n\nЗащита от спама: следующее предложение можно отправить через 30 минут.`);
+        };
+
+        window.publishAd = () => {
+            // Имитация успешной публикации и показа QR/ссылки
+            const app = document.getElementById('app');
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div style="font-size:50px;margin-bottom:16px;">✅</div>
+                    <h3 style="font-size:22px;font-weight:800;margin-bottom:8px;">Опубликовано!</h3>
+                    <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">Твой лот теперь в ленте сервера. Поделись им, чтобы продать быстрее!</p>
+                    
+                    <div style="background:#fff;padding:16px;border-radius:16px;display:inline-block;margin-bottom:20px;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=t.me/black_russia_market_bot?start=ad_12345" style="border-radius:8px;">
+                    </div>
+
+                    <div style="display:flex;gap:10px;">
+                        <div onclick="this.closest('.modal-overlay').remove(); window.navigate('market')" style="flex:1;background:rgba(255,255,255,0.1);padding:14px;border-radius:12px;font-weight:700;cursor:pointer;">Закрыть</div>
+                        <div onclick="tg.showAlert('Ссылка скопирована!'); this.closest('.modal-overlay').remove(); window.navigate('market')" style="flex:2;background:var(--accent-pink);color:white;padding:14px;border-radius:12px;font-weight:700;cursor:pointer;">Копировать ссылку</div>
+                    </div>
+                </div>
+            `;
+            app.appendChild(modal);
+        };
+
+        // --- РЕНДЕР И УПРАВЛЕНИЕ СКРОЛЛОМ ---
+        function render() {
+            let html = '';
+            if (state.view === 'servers') html = renderServers();
+            else if (state.view === 'market') html = renderMarket();
+            else if (state.view === 'item') html = renderItemView();
+            else if (state.view === 'profile') html = renderProfile();
+            else if (state.view === 'create') html = renderCreateForm();
+            else html = renderServers();
+
+            document.getElementById('app').innerHTML = html;
+
+            // Логика исчезновения плюсика при скролле
+            if (state.view === 'market') {
+                const fab = document.getElementById('fab');
+                let lastScroll = 0;
+                let hideTimeout = null;
+
+                window.onscroll = () => {
+                    const current = window.scrollY;
+                    if (current > lastScroll && current > 50) {
+                        if(fab) fab.classList.add('hidden');
+                    } else {
+                        if(fab) {
+                            fab.classList.remove('hidden');
+                            fab.style.opacity = '0.9';
+                        }
+                    }
+                    lastScroll = current;
+
+                    if (hideTimeout) clearTimeout(hideTimeout);
+                    hideTimeout = setTimeout(() => {
+                        if (fab && !fab.classList.contains('hidden')) fab.style.opacity = '0.6';
+                    }, 2500);
+                };
+            } else {
+                window.onscroll = null; // Отключаем логику на других страницах
+            }
+        }
+
+        render();
     </script>
 </body>
 </html>
